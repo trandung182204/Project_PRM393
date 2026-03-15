@@ -1,0 +1,50 @@
+﻿Analyzing FSchool-FE...                                         
+
+   info - Don't invoke 'print' in production code - lib\controllers\absence_request_controller.dart:11:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\controllers\absence_request_controller.dart:30:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\controllers\club_controller.dart:12:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\controllers\event_controller.dart:11:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\controllers\news_controller.dart:11:7 - avoid_print
+   info - Don't invoke 'print' in production code - lib\controllers\schedule_controller.dart:11:7 - avoid_print
+   info - Constructors for public widgets should have a named 'key' parameter - lib\main.dart:19:7 - use_key_in_widget_constructors
+   info - The file name 'clubs-details.dart' isn't a lower_case_with_underscores identifier - lib\screens\clubs-details.dart:1:1 - file_names
+   info - The file name 'create-report.dart' isn't a lower_case_with_underscores identifier - lib\screens\create-report.dart:1:1 - file_names
+   info - Don't use 'BuildContext's across async gaps - lib\screens\create-report.dart:130:28 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\create-report.dart:133:21 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\screens\create-report.dart:135:28 - use_build_context_synchronously
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\create-report.dart:310:43 - deprecated_member_use
+   info - Unnecessary use of 'toList' in a spread - lib\screens\create-report.dart:371:16 - unnecessary_to_list_in_spreads
+   info - The file name 'event-details.dart' isn't a lower_case_with_underscores identifier - lib\screens\event-details.dart:1:1 - file_names
+   info - The file name 'forgot-password.dart' isn't a lower_case_with_underscores identifier - lib\screens\forgot-password.dart:1:1 - file_names
+   info - Don't invoke 'print' in production code - lib\screens\login.dart:32:7 - avoid_print
+   info - The file name 'mark-report.dart' isn't a lower_case_with_underscores identifier - lib\screens\mark-report.dart:1:1 - file_names
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\mark-report.dart:119:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\report.dart:128:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\report.dart:168:44 - deprecated_member_use
+   info - The file name 'reset-password.dart' isn't a lower_case_with_underscores identifier - lib\screens\reset-password.dart:1:1 - file_names
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\schedule.dart:100:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\schedule.dart:150:56 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\schedule.dart:268:34 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\schedule.dart:283:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\screens\schedule.dart:312:46 - deprecated_member_use
+   info - The import of 'package:flutter/widgets.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - lib\screens\signup.dart:2:8 - unnecessary_import
+   info - The file name 'table-app.dart' isn't a lower_case_with_underscores identifier - lib\screens\table-app.dart:1:1 - file_names
+
+flutter : 29 issues 
+found. (ran in 1.2s)
+At line:1 char:1
++ flutter analyze 
+2>&1 | Out-File 
+-Encoding utf8 D:\Mobi
+le\Git\FSchool- ...
++ ~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo    
+          : NotSpeci  
+  fied: (29 issues    
+ found. (ran in 1.    
+2s):String) [], R    
+emoteException
+    + FullyQualifiedE 
+   rrorId : NativeCo  
+  mmandError
+ 
