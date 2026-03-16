@@ -41,7 +41,7 @@ class _AdminAccountScreenState extends State<AdminAccountScreen> {
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Tạo tài khoản thành công!')),
+          const SnackBar(content: Text('Account created successfully!')),
         );
         Navigator.pop(context);
       }
@@ -60,7 +60,7 @@ class _AdminAccountScreenState extends State<AdminAccountScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Tạo tài khoản mới'),
+        title: const Text('Create New Account'),
         backgroundColor: const Color(0xFF1E1E1E),
         foregroundColor: Colors.white,
       ),
@@ -72,37 +72,37 @@ class _AdminAccountScreenState extends State<AdminAccountScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text(
-                'Thông tin cơ bản',
+                'Basic Information',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _phoneController,
-                decoration: const InputDecoration(labelText: 'Số điện thoại', border: OutlineInputBorder()),
-                validator: (v) => v!.isEmpty ? 'Vui lòng nhập số điện thoại' : null,
+                decoration: const InputDecoration(labelText: 'Phone Number', border: OutlineInputBorder()),
+                validator: (v) => v!.isEmpty ? 'Please enter phone number' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                validator: (v) => v!.isEmpty ? 'Vui lòng nhập email' : null,
+                validator: (v) => v!.isEmpty ? 'Please enter email' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Mật khẩu', border: OutlineInputBorder()),
+                decoration: const InputDecoration(labelText: 'Password', border: OutlineInputBorder()),
                 obscureText: true,
-                validator: (v) => v!.isEmpty ? 'Vui lòng nhập mật khẩu' : null,
+                validator: (v) => v!.isEmpty ? 'Please enter password' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _fullNameController,
-                decoration: const InputDecoration(labelText: 'Họ và tên', border: OutlineInputBorder()),
-                validator: (v) => v!.isEmpty ? 'Vui lòng nhập họ và tên' : null,
+                decoration: const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
+                validator: (v) => v!.isEmpty ? 'Please enter full name' : null,
               ),
               const SizedBox(height: 24),
               const Text(
-                'Vai trò',
+                'Role',
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
               Row(
@@ -112,31 +112,31 @@ class _AdminAccountScreenState extends State<AdminAccountScreen> {
                     groupValue: _selectedRole,
                     onChanged: (v) => setState(() => _selectedRole = v!),
                   ),
-                  const Text('Sinh viên'),
+                  const Text('Student'),
                   const SizedBox(width: 20),
                   Radio<String>(
                     value: 'Staff',
                     groupValue: _selectedRole,
                     onChanged: (v) => setState(() => _selectedRole = v!),
                   ),
-                  const Text('Nhân viên/Giáo viên'),
+                  const Text('Staff/Teacher'),
                 ],
               ),
               const SizedBox(height: 16),
               if (_selectedRole == 'Student')
                 TextFormField(
                   controller: _rollNumberController,
-                  decoration: const InputDecoration(labelText: 'MSSV', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(labelText: 'Student ID', border: OutlineInputBorder()),
                 ),
               if (_selectedRole == 'Staff') ...[
                 TextFormField(
                   controller: _employeeIdController,
-                  decoration: const InputDecoration(labelText: 'Mã nhân viên', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(labelText: 'Employee ID', border: OutlineInputBorder()),
                 ),
                 const SizedBox(height: 16),
                 TextFormField(
                   controller: _departmentController,
-                  decoration: const InputDecoration(labelText: 'Phòng ban', border: OutlineInputBorder()),
+                  decoration: const InputDecoration(labelText: 'Department', border: OutlineInputBorder()),
                 ),
               ],
               const SizedBox(height: 32),
@@ -149,7 +149,7 @@ class _AdminAccountScreenState extends State<AdminAccountScreen> {
                     backgroundColor: const Color(0xFF1E1E1E),
                     foregroundColor: Colors.white,
                   ),
-                  child: _isLoading ? const CircularProgressIndicator() : const Text('TẠO TÀI KHOẢN'),
+                  child: _isLoading ? const CircularProgressIndicator() : const Text('CREATE ACCOUNT'),
                 ),
               ),
             ],

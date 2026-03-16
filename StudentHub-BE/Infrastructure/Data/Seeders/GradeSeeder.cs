@@ -31,7 +31,7 @@ public class GradeSeeder : ISeeder
         var subjects = await _context.Subjects.ToListAsync();
         var semesters = await _context.Semesters.ToListAsync();
 
-        if (student == null || subjects.Count < 3 || semesters.Count < 3)
+        if (student == null || subjects.Count < 5 || semesters.Count < 3)
         {
             _logger.LogWarning("Insufficient data to seed distributed grades. Skipping...");
             return;

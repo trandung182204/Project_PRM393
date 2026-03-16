@@ -9,7 +9,7 @@ class StudentService {
       List list = jsonDecode(response.body);
       return list.map((e) => e as Map<String, dynamic>).toList();
     } else {
-      throw Exception('Lỗi khi lấy danh sách sinh viên');
+      throw Exception('Error fetching student list');
     }
   }
 }

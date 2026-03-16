@@ -4,8 +4,8 @@ import 'package:bai1/config/api_config.dart';
 import 'package:bai1/models/schedule.dart';
 
 class ScheduleService {
-  /// Lấy lịch theo khoảng ngày [fromDate, toDate]
-  /// API trả về { fromDate, toDate, schedules: [...] }
+  /// Get schedule by date range [fromDate, toDate]
+  /// API returns { fromDate, toDate, schedules: [...] }
   Future<Map<String, dynamic>> getSchedulesByDateRange({
     int? classId,
     int? staffId,
@@ -39,9 +39,9 @@ class ScheduleService {
     }
   }
 
-  /// Lấy lịch (backward-compatible, dùng cho các chỗ cũ nếu cần)
+  /// Get schedule (backward-compatible, for legacy use)
   Future<List<Schedule>> getSchedules({int? classId, int? staffId}) async {
-    // Mặc định lấy tuần hiện tại
+    // Default to current week
     final now = DateTime.now();
     final monday = now.subtract(Duration(days: now.weekday - 1));
     final sunday = monday.add(const Duration(days: 6));

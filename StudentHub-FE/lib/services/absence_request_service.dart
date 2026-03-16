@@ -4,11 +4,12 @@ import 'package:bai1/config/api_config.dart';
 import 'package:bai1/models/absence_request.dart';
 
 class AbsenceRequestService {
-  Future<List<AbsenceRequestModel>> getAbsenceRequests({int? accountId, int? classId}) async {
+  Future<List<AbsenceRequestModel>> getAbsenceRequests({int? accountId, int? classId, int? staffId}) async {
     String url = ApiConfig.absenceRequests;
     List<String> params = [];
     if (accountId != null) params.add('accountId=$accountId');
     if (classId != null) params.add('classId=$classId');
+    if (staffId != null) params.add('staffId=$staffId');
 
     if (params.isNotEmpty) {
       url += '?${params.join('&')}';

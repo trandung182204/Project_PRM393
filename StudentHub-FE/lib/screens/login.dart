@@ -13,12 +13,12 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final _authController = AuthController();
 
-  // 1. Thêm biến quản lý ẩn/hiện mật khẩu và trạng thái Loading
+  // 1. Manage password visibility and loading state
   bool _isObscure = true;
   bool _isLoading = false;
 
   Future<void> _handleLogin() async {
-    // Ẩn bàn phím khi bấm Login
+    // Hide keyboard when Login is clicked
     FocusScope.of(context).unfocus();
 
     setState(() => _isLoading = true);
@@ -30,19 +30,19 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       debugPrint(
-        "=====> API THÀNH CÔNG! ClassId là: ${response.role}",
+        "=====> API SUCCESS! Role is: ${response.role}",
       ); // Log 2
       if (!mounted) return;
       Navigator.pushNamed(
         context,
         '/home',
-        arguments: response, // Gửi data đi
+        arguments: response, // Pass data
       );
     } catch (e) {
-      debugPrint("=====> LỖI RỒI: $e"); // Log 3
+      debugPrint("=====> ERROR: $e"); // Log 3
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Sai tài khoản hoặc mật khẩu")),
+        const SnackBar(content: Text("Invalid phone number or password")),
       );
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -59,9 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ), // Căn lề đều và rộng hơn một chút cho đẹp
           child: Column(
             children: [
-              const SizedBox(
-                height: 40,
-              ), // Đẩy form xuống một chút tránh vướng tai thỏ/status bar
+              const SizedBox(height: 40), // Push form down to avoid notch/status bar
               Column(
                 children: [
                   const Image(
@@ -90,11 +88,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   children: [
                     TextFormField(
                       controller: _phoneController,
-                      keyboardType: TextInputType.phone, // Mở sẵn bàn phím số
+                      keyboardType: TextInputType.phone, // Open numeric keyboard
                       decoration: const InputDecoration(
                         prefixIcon: Icon(
                           Icons.phone,
-                        ), // 2. Sửa từ prefix -> prefixIcon
+                        ), // 2. Changed from prefix to prefixIcon
                         labelText: "Phone Number",
                         border: OutlineInputBorder(),
                       ),
@@ -103,14 +101,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     TextFormField(
                       controller: _passwordController,
                       obscureText:
-                          _isObscure, // 3. Ràng buộc với biến _isObscure
+                          _isObscure, // 3. Bound to _isObscure variable
                       decoration: InputDecoration(
                         prefixIcon: const Icon(
                           Icons.lock,
                         ), // Dùng icon lock cho pass hợp lý hơn
                         labelText: "Password",
                         border: const OutlineInputBorder(),
-                        // 4. Sửa suffix -> suffixIcon và dùng IconButton để bấm được
+                        // 4. Changed suffix to suffixIcon and used IconButton for interactivity
                         suffixIcon: IconButton(
                           icon: Icon(
                             _isObscure
@@ -120,7 +118,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           ),
                           onPressed: () {
                             setState(() {
-                              _isObscure = !_isObscure; // Đảo ngược trạng thái
+                              _isObscure = !_isObscure; // Toggle state
                             });
                           },
                         ),
@@ -129,7 +127,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 10),
                     Row(
                       mainAxisAlignment: MainAxisAlignment
-                          .end, // Ép chữ Forgot Password sang phải
+                          .end, // Align Forgot Password text to the right
                       children: [
                         InkWell(
                           onTap: () {
@@ -148,14 +146,14 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 30),
                     SizedBox(
                       width: double.infinity,
-                      height: 50, // Cố định chiều cao nút bấm
+                      height: 50, // Fixed button height
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),
                         ),
-                        // 5. Khóa nút khi đang load
+                        // 5. Lock button while loading
                         onPressed: _isLoading ? null : _handleLogin,
                         child: _isLoading
                             ? const SizedBox(
