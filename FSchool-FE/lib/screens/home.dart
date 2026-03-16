@@ -163,7 +163,7 @@ class _HomeState extends State<Home> {
                         TextSpan(text: " - Roll Number: "),
                         TextSpan(
                           text: rollNumber,
-                          style: TextStyle(color: Colors.orange),
+                          style: TextStyle(color: Colors.lightBlue),
                         ),
                       ],
                     ],
@@ -248,7 +248,7 @@ class _HomeState extends State<Home> {
                             child: Icon(
                               item["icon"],
                               size: 28,
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                             ),
                           ),
                           const SizedBox(height: 6),

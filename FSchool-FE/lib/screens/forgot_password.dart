@@ -73,9 +73,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     },
                     child: Row(
                       children: [
-                        Icon(Icons.arrow_back_ios, color: Colors.orange),
-                        SizedBox(width: 5),
-                        Text("Back", style: TextStyle(color: Colors.orange)),
+                        Icon(Icons.arrow_back_ios, color: Colors.lightBlue),
+                        const SizedBox(width: 5),
+                        const Text("Back", style: TextStyle(color: Colors.lightBlue)),
                       ],
                     ),
                   ),
@@ -118,7 +118,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                       width: double.infinity,
                       child: ElevatedButton(
                         style: OutlinedButton.styleFrom(
-                          backgroundColor: Colors.orange,
+                          backgroundColor: Colors.lightBlue,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),

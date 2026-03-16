@@ -24,7 +24,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
   List<Map<String, dynamic>> _studentsInClass = [];
   
   bool _isLoading = true;
-  String _classSearchQuery = "";
+  // Removed unused _classSearchQuery
 
   @override
   void initState() {
@@ -67,7 +67,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
 
   void _filterClasses(String query) {
     setState(() {
-      _classSearchQuery = query;
+      // _classSearchQuery = query; // Removed unused assignment
       _filteredClasses = _classes
           .where((c) => c['className'].toString().toLowerCase().contains(query.toLowerCase()))
           .toList();
@@ -148,7 +148,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
             _currentState == ScreenState.classList ? 'Xếp Lớp' : _selectedClass?['className'] ?? 'Chi Tiết',
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.lightBlue,
           iconTheme: const IconThemeData(color: Colors.white),
           elevation: 0,
           leading: _currentState == ScreenState.classDetail
@@ -159,14 +159,14 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
               : null,
         ),
         body: _isLoading
-            ? const Center(child: CircularProgressIndicator(color: Colors.orange))
+            ? const Center(child: CircularProgressIndicator(color: Colors.lightBlue))
             : _currentState == ScreenState.classList
                 ? _buildClassList()
                 : _buildClassDetail(),
         floatingActionButton: _currentState == ScreenState.classList
             ? FloatingActionButton(
                 onPressed: _showAddClassDialog,
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.lightBlue,
                 child: const Icon(Icons.add, color: Colors.white),
               )
             : null,
@@ -216,7 +216,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                 setState(() => _isLoading = false);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
             child: const Text("Tạo lớp", style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -257,8 +257,8 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12), side: BorderSide(color: Colors.grey[200]!)),
                       child: ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.orange.shade100,
-                          child: const Icon(Icons.class_, color: Colors.orange),
+                          backgroundColor: Colors.lightBlue.shade100,
+                          child: const Icon(Icons.class_, color: Colors.lightBlue),
                         ),
                         title: Text(c['className'], style: const TextStyle(fontWeight: FontWeight.bold)),
                         subtitle: Text("Lớp ID: ${c['id']}"),
@@ -329,7 +329,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                 setState(() => _isLoading = false);
               }
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
             child: const Text("Lưu thay đổi", style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -375,7 +375,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
         Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
-          color: Colors.orange.shade50,
+          color: Colors.lightBlue.shade50,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -417,7 +417,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                 icon: const Icon(Icons.person_add, color: Colors.white),
                 label: const Text("THÊM SINH VIÊN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.lightBlue,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 ),
               ),
@@ -442,7 +442,7 @@ class StudentPicker extends StatefulWidget {
 class _StudentPickerState extends State<StudentPicker> {
   List<Map<String, dynamic>> _filteredStudents = [];
   final Set<int> _selectedIds = {};
-  String _query = "";
+  // Removed unused _query
 
   @override
   void initState() {
@@ -452,7 +452,7 @@ class _StudentPickerState extends State<StudentPicker> {
 
   void _filter(String q) {
     setState(() {
-      _query = q;
+      // _query = q; // Removed unused assignment
       _filteredStudents = widget.students
           .where((s) =>
               s['fullName'].toString().toLowerCase().contains(q.toLowerCase()) ||
@@ -520,7 +520,7 @@ class _StudentPickerState extends State<StudentPicker> {
                       widget.onSelected(_selectedIds.toList());
                     },
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.orange,
+                backgroundColor: Colors.lightBlue,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: Text("XÁC NHẬN (${_selectedIds.length})", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

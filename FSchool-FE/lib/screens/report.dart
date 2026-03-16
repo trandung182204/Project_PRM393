@@ -58,7 +58,7 @@ class _ReportScreenState extends State<ReportScreen> {
           'My Requests',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -94,7 +94,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   },
                 ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         elevation: 4,
         child: const Icon(Icons.add, color: Colors.white, size: 30),
         onPressed: () async {
@@ -117,7 +117,7 @@ class _ReportScreenState extends State<ReportScreen> {
   }
 
   Widget _buildReportCard(AbsenceRequestModel item) {
-    Color statusColor = Colors.orange;
+    Color statusColor = Colors.lightBlue;
     IconData statusIcon = Icons.access_time_filled;
 
     if (item.status == 'Approved') {
@@ -167,10 +167,10 @@ class _ReportScreenState extends State<ReportScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade50,
+                  color: Colors.lightBlue.shade50,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.description, color: Colors.orange),
+                child: const Icon(Icons.description, color: Colors.lightBlue),
               ),
               const SizedBox(width: 12),
               Expanded(

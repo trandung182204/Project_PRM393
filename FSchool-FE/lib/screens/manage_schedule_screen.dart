@@ -73,7 +73,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Quản lý Lịch học", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.indigo,
+        backgroundColor: Colors.lightBlue,
         foregroundColor: Colors.white,
       ),
       body: Column(
@@ -94,7 +94,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
               onPressed: _showBatchScheduleDialog,
               icon: const Icon(Icons.auto_awesome),
               label: const Text("Xếp lịch hàng loạt"),
-              backgroundColor: Colors.indigo,
+              backgroundColor: Colors.lightBlue,
             )
           : null,
     );
@@ -174,7 +174,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
                 ),
                 Row(
                   children: [
-                    const Icon(Icons.person_outline, size: 14, color: Colors.orange),
+                    const Icon(Icons.person_outline, size: 14, color: Colors.lightBlue),
                     const SizedBox(width: 4),
                     Text(s.teacher),
                   ],
@@ -405,7 +405,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
             child: ElevatedButton(
               onPressed: _isLoading ? null : _handleBatchSchedule,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.indigo,
+                backgroundColor: Colors.lightBlue,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
               child: _isLoading 

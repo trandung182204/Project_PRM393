@@ -207,7 +207,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
                               ? Colors.green.shade100
                               : reg.attendanceStatus == 'Absent'
                                   ? Colors.red.shade100
-                                  : Colors.orange.shade100,
+                                  : Colors.lightBlue.shade100,
                           child: Icon(
                             reg.attendanceStatus == 'Attended'
                                 ? Icons.check
@@ -218,7 +218,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
                                 ? Colors.green
                                 : reg.attendanceStatus == 'Absent'
                                     ? Colors.red
-                                    : Colors.orange,
+                                    : Colors.lightBlue,
                           ),
                         ),
                         title: Text(reg.fullName),
@@ -359,7 +359,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
       case 'Approved':
         return Colors.blue;
       case 'Pending':
-        return Colors.orange;
+        return Colors.lightBlue;
       case 'Ongoing':
         return Colors.teal;
       case 'Completed':
@@ -376,7 +376,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
     return Scaffold(
       appBar: AppBar(
         title: const Text("Manage Events", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(onPressed: _fetchEvents, icon: const Icon(Icons.refresh)),
@@ -408,7 +408,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showEventDialog(),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         child: const Icon(Icons.add),
       ),
     );

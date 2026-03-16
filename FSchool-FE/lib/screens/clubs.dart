@@ -39,7 +39,7 @@ class _ClubsScreenState extends State<ClubsScreen> {
           'Student Clubs',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(

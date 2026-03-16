@@ -96,7 +96,7 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
           'Academic Result',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -164,14 +164,14 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Colors.orange.shade400, Colors.orange.shade700],
+                    colors: [Colors.lightBlue.shade400, Colors.lightBlue.shade700],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                   ),
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.orange.withOpacity(0.3),
+                      color: Colors.lightBlue.withOpacity(0.3),
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -414,7 +414,7 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
             child: DropdownButton<String>(
               value: effectiveValue,
               isExpanded: true,
-              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.orange),
+              icon: const Icon(Icons.keyboard_arrow_down, color: Colors.lightBlue),
               items: items.map((String item) {
                 return DropdownMenuItem<String>(value: item, child: Text(item));
               }).toList(),

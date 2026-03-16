@@ -122,7 +122,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         title: const Text("Xác nhận OTP"),
         backgroundColor: Colors.transparent,
         elevation: 0,
-        foregroundColor: Colors.orange,
+        foregroundColor: Colors.lightBlue,
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -132,7 +132,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               const Icon(
                 Icons.mark_email_read_outlined,
                 size: 80,
-                color: Colors.orange,
+                color: Colors.lightBlue,
               ),
               const SizedBox(height: 20),
               Text(
@@ -170,7 +170,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 height: 50,
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Colors.lightBlue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(6),
                     ),
@@ -204,7 +204,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                           child: const Text(
                             "Gửi lại mã",
                             style: TextStyle(
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

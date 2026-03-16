@@ -39,7 +39,7 @@ class _EventsScreenState extends State<EventsScreen> {
           'School Events',
           style: TextStyle(color: Colors.white),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         leading: IconButton(
@@ -93,12 +93,12 @@ class _EventsScreenState extends State<EventsScreen> {
                     fit: BoxFit.cover,
                     errorBuilder: (ctx, err, stack) => Container(
                       height: 150,
-                      color: Colors.orange.shade100,
+                      color: Colors.lightBlue.shade100,
                       child: const Center(
                         child: Icon(
                           Icons.image,
                           size: 50,
-                          color: Colors.orange,
+                          color: Colors.lightBlue,
                         ),
                       ),
                     ),

@@ -135,7 +135,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
               child: Column(
                 children: [
                   const TabBar(
-                    labelColor: Colors.orange,
+                    labelColor: Colors.lightBlue,
                     tabs: [
                       Tab(text: "Active"),
                       Tab(text: "Pending"),
@@ -169,7 +169,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
                                 child: Container(
                                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                   decoration: BoxDecoration(
-                                    color: Colors.orange.shade100,
+                                    color: Colors.lightBlue.shade100,
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: Row(
@@ -238,7 +238,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
     return Scaffold(
       appBar: AppBar(
         title: const Text("Manage Clubs", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
           IconButton(onPressed: _fetchData, icon: const Icon(Icons.refresh)),
@@ -266,9 +266,9 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
                     final club = _activeClubs[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: Colors.orange.shade100,
+                        backgroundColor: Colors.lightBlue.shade100,
                         child: Text(club.name.isNotEmpty ? club.name[0] : '?',
-                            style: const TextStyle(color: Colors.orange)),
+                            style: const TextStyle(color: Colors.lightBlue)),
                       ),
                       title: Text(club.name),
                       subtitle: Text("${club.category} - ${club.members} members"),
@@ -276,7 +276,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.people, color: Colors.orange),
+                            icon: const Icon(Icons.people, color: Colors.lightBlue),
                             tooltip: "Manage Members",
                             onPressed: () => _showMembersDialog(club),
                           ),
@@ -316,7 +316,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
                     final club = _pendingClubs[index];
                     return ListTile(
                       leading: CircleAvatar(
-                        backgroundColor: Colors.orange.shade200,
+                        backgroundColor: Colors.lightBlue.shade200,
                         child: const Icon(Icons.hourglass_top, color: Colors.white),
                       ),
                       title: Text(club.name),
@@ -346,7 +346,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
             ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showClubDialog(),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         child: const Icon(Icons.add),
       ),
     );

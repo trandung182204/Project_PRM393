@@ -66,13 +66,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const Image(
                     height: 150,
-                    image: NetworkImage(
-                      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRNkwDjcK0EsrsVg_I-HsRnivHuIkBcsfyitw&s',
-                    ),
+                    image: AssetImage('assets/icon/student_hub_logo.png'),
                   ),
                   const SizedBox(height: 10),
-                  Column(
-                    children: const [
+                  const Column(
+                    children: [
                       Text(
                         "Sign In",
                         style: TextStyle(
@@ -81,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Text("Welcome to FSchool"),
+                      Text("Welcome to StudentHub"),
                     ],
                   ),
                 ],
@@ -140,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           child: const Text(
                             "Forgot Password?",
                             style: TextStyle(
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -153,7 +151,6 @@ class _LoginScreenState extends State<LoginScreen> {
                       height: 50, // Cố định chiều cao nút bấm
                       child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(6),
                           ),

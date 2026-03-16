@@ -13,7 +13,7 @@ class SettingsScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Settings', style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -32,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
                 children: [
                   const CircleAvatar(
                     radius: 40,
-                    backgroundColor: Colors.orange,
+                    backgroundColor: Colors.lightBlue,
                     child: Icon(Icons.person, size: 50, color: Colors.white),
                   ),
                   const SizedBox(width: 20),
@@ -50,7 +50,7 @@ class SettingsScreen extends StatelessWidget {
                         Text(
                           'Role: ${args?.role ?? 'N/A'}',
                           style: TextStyle(
-                            color: Colors.orange[800],
+                            color: Colors.lightBlue[800],
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -159,7 +159,7 @@ class SettingsScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return ListTile(
-      leading: Icon(icon, color: Colors.orange),
+      leading: Icon(icon, color: Colors.lightBlue),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       trailing: const Icon(Icons.chevron_right, color: Colors.grey),
       onTap: onTap,

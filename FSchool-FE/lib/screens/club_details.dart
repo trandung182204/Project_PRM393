@@ -69,7 +69,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: Text(widget.club['name'], style: const TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
@@ -84,7 +84,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
             const SizedBox(height: 30),
             CircleAvatar(
               radius: 60,
-              backgroundColor: Colors.orange.shade100,
+              backgroundColor: Colors.lightBlue.shade100,
               backgroundImage: NetworkImage(widget.club['image']),
             ),
             const SizedBox(height: 20),
@@ -162,10 +162,10 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
                                 final member = _members[index];
                                 return ListTile(
                                   leading: CircleAvatar(
-                                    backgroundColor: Colors.orange.shade100,
+                                    backgroundColor: Colors.lightBlue.shade100,
                                     child: Text(
                                       member.fullName.isNotEmpty ? member.fullName[0] : '?',
-                                      style: const TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                                      style: const TextStyle(color: Colors.lightBlue, fontWeight: FontWeight.bold),
                                     ),
                                   ),
                                   title: Text(member.fullName),
@@ -174,7 +174,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
                                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                                     decoration: BoxDecoration(
                                       color: member.clubRole == 'President'
-                                          ? Colors.orange
+                                          ? Colors.lightBlue
                                           : member.clubRole == 'VicePresident'
                                               ? Colors.blue
                                               : Colors.grey.shade300,
@@ -201,7 +201,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _hasJoined ? Colors.grey : Colors.orange,
+                        backgroundColor: _hasJoined ? Colors.grey : Colors.lightBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(30),
                         ),
@@ -230,7 +230,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
       case 'Active':
         return Colors.green;
       case 'PendingApproval':
-        return Colors.orange;
+        return Colors.lightBlue;
       case 'Inactive':
         return Colors.red;
       default:
@@ -248,7 +248,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Colors.orange,
+              color: Colors.lightBlue,
             ),
           ),
           const SizedBox(height: 4),

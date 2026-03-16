@@ -52,7 +52,7 @@ class _ManageAbsenceRequestsScreenState extends State<ManageAbsenceRequestsScree
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
         title: const Text("Manage Absences", style: TextStyle(color: Colors.white)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         iconTheme: const IconThemeData(color: Colors.white),
         actions: [
@@ -75,7 +75,7 @@ class _ManageAbsenceRequestsScreenState extends State<ManageAbsenceRequestsScree
   }
 
   Widget _buildRequestCard(AbsenceRequestModel request) {
-    Color statusColor = Colors.orange;
+    Color statusColor = Colors.lightBlue;
     if (request.status == 'Approved') statusColor = Colors.green;
     if (request.status == 'Rejected') statusColor = Colors.red;
 

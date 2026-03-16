@@ -6,10 +6,10 @@ class TableApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Timetable UI',
+      title: 'StudentHub Timetable',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.lightBlue),
         useMaterial3: true,
       ),
       home: const HomeWidget(),
@@ -39,8 +39,8 @@ class _HomeWidgetState extends State<HomeWidget> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("FPT Timetable"),
-        backgroundColor: Colors.blue.shade100,
+        title: const Text("StudentHub Timetable"),
+        backgroundColor: Colors.lightBlue.shade100,
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -74,7 +74,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   // Header Dòng 1
   TableRow _buildHeaderRow1() {
     return TableRow(
-      decoration: const BoxDecoration(color: Color(0xFF6A8ECE)),
+      decoration: const BoxDecoration(color: Color(0xFF03A9F4)), // Light Blue primary
       children: [
         _yearDropdownCell(), // Sử dụng Dropdown cho Year
         _headerCell("MON", isWhite: true),
@@ -91,7 +91,7 @@ class _HomeWidgetState extends State<HomeWidget> {
   // Header Dòng 2
   TableRow _buildHeaderRow2() {
     return TableRow(
-      decoration: const BoxDecoration(color: Color(0xFF90AEE0)),
+      decoration: const BoxDecoration(color: Color(0xFFB3E5FC)), // Light Blue secondary
       children: [
         _weekDropdownCell(), // Sử dụng Dropdown cho Week
         _headerCell("02/03"),
@@ -115,7 +115,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           const Text(
             "YEAR ",
             style: TextStyle(
-              color: Colors.red,
+              color: Colors.lightBlue,
               fontWeight: FontWeight.bold,
               fontSize: 12,
             ),
@@ -351,14 +351,14 @@ class _HomeWidgetState extends State<HomeWidget> {
               Text(
                 "$courseCode- ",
                 style: const TextStyle(
-                  color: Colors.blue,
+                  color: Colors.lightBlue,
                   fontWeight: FontWeight.bold,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade300,
+                  color: Colors.lightBlue.shade300,
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: const Text(
@@ -379,7 +379,7 @@ class _HomeWidgetState extends State<HomeWidget> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
             decoration: BoxDecoration(
-              color: Colors.blue.shade700,
+              color: Colors.lightBlue.shade700,
               borderRadius: BorderRadius.circular(4),
             ),
             child: Text(

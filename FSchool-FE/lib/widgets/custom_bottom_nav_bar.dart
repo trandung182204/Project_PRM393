@@ -22,7 +22,7 @@ class CustomBottomNavigationBar extends StatelessWidget {
       ),
       child: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: isInvalidIndex ? Colors.grey : Colors.orange,
+        selectedItemColor: isInvalidIndex ? Colors.grey : Colors.lightBlue,
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         currentIndex: effectiveIndex,

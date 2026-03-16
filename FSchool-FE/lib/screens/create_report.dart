@@ -132,7 +132,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: Colors.orange),
+            colorScheme: const ColorScheme.light(primary: Colors.lightBlue),
           ),
           child: child!,
         );
@@ -251,7 +251,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
           style: const TextStyle(color: Colors.white),
         ),
         centerTitle: true,
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         elevation: 0,
       ),
       body: SingleChildScrollView(
@@ -372,7 +372,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 const Text(
                   "Future Lessons (1 Week)",
                   style: TextStyle(
-                    color: Colors.orange,
+                    color: Colors.lightBlue,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
@@ -382,7 +382,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                     children: [
                       Checkbox(
                         value: _isSelectAll,
-                        activeColor: Colors.orange,
+                        activeColor: Colors.lightBlue,
                         onChanged: _toggleSelectAll,
                       ),
                       const Text("Select All"),
@@ -448,7 +448,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                               TextSpan(
                                 text: slot['name'].split(':').last,
                                 style: const TextStyle(
-                                  color: Colors.orange,
+                                  color: Colors.lightBlue,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -460,12 +460,12 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.orange.shade50,
+                          color: Colors.lightBlue.shade50,
                           borderRadius: BorderRadius.circular(8),
                         ),
                         child: Text(
                           displayDate,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.orange),
+                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.lightBlue),
                         ),
                       ),
                     ],
@@ -487,7 +487,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                           Text(
                             slot['room'],
                             style: const TextStyle(
-                              color: Colors.orange,
+                              color: Colors.lightBlue,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -497,7 +497,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   ),
                   trailing: Checkbox(
                     value: slot['isSelected'],
-                    activeColor: Colors.orange,
+                    activeColor: Colors.lightBlue,
                     onChanged: (val) => _toggleSlot(idx, val),
                   ),
                 ),
@@ -523,7 +523,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   borderSide: const BorderSide(color: Colors.grey),
                 ),
                 focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.orange),
+                  borderSide: BorderSide(color: Colors.lightBlue),
                 ),
               ),
             ),
@@ -537,7 +537,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   child: ElevatedButton(
                     onPressed: _isSubmitting ? null : _submitRequest,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[400],
+                      backgroundColor: Colors.lightBlue[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -567,7 +567,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   child: ElevatedButton(
                     onPressed: _resetForm,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange[400],
+                      backgroundColor: Colors.lightBlue[400],
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
@@ -610,7 +610,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: isSelected ? Colors.orange : Colors.grey.shade400,
+            color: isSelected ? Colors.lightBlue : Colors.grey.shade400,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -641,12 +641,12 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                 height: 20,
                 decoration: BoxDecoration(
                   border: Border.all(
-                    color: isSelected ? Colors.orange : Colors.grey,
+                    color: isSelected ? Colors.lightBlue : Colors.grey,
                   ),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: isSelected
-                    ? const Icon(Icons.check, size: 16, color: Colors.orange)
+                    ? const Icon(Icons.check, size: 16, color: Colors.lightBlue)
                     : null,
               ),
             ),

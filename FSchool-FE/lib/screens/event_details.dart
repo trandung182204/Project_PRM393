@@ -50,7 +50,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
           SliverAppBar(
             expandedHeight: 250.0,
             pinned: true,
-            backgroundColor: Colors.orange,
+            backgroundColor: Colors.lightBlue,
             leading: IconButton(
               icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
               onPressed: () {
@@ -70,7 +70,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                 widget.event['image'],
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.orange.shade200),
+                    Container(color: Colors.lightBlue.shade200),
               ),
             ),
           ),
@@ -115,7 +115,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       const Icon(
                         Icons.calendar_today,
                         size: 16,
-                        color: Colors.orange,
+                        color: Colors.lightBlue,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -126,7 +126,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       const Icon(
                         Icons.location_on,
                         size: 16,
-                        color: Colors.orange,
+                        color: Colors.lightBlue,
                       ),
                       const SizedBox(width: 8),
                       Text(
@@ -141,7 +141,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.attach_money, size: 16, color: Colors.orange),
+                        const Icon(Icons.attach_money, size: 16, color: Colors.lightBlue),
                         const SizedBox(width: 8),
                         Text(
                           'Budget: ${widget.event['budget']}',
@@ -156,7 +156,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Icon(Icons.group, size: 16, color: Colors.orange),
+                        const Icon(Icons.group, size: 16, color: Colors.lightBlue),
                         const SizedBox(width: 8),
                         Text(
                           'Max: ${widget.event['maxParticipants']} participants',
@@ -186,7 +186,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                     height: 50,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: _isRegistered ? Colors.green : Colors.orange,
+                        backgroundColor: _isRegistered ? Colors.green : Colors.lightBlue,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -217,7 +217,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
       case 'Approved':
         return Colors.blue;
       case 'Pending':
-        return Colors.orange;
+        return Colors.lightBlue;
       case 'Ongoing':
         return Colors.teal;
       case 'Completed':

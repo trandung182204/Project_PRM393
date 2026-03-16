@@ -226,7 +226,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
                   Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      color: Colors.orange.withOpacity(0.1),
+                      color: Colors.lightBlue.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Row(
@@ -245,7 +245,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
               TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.lightBlue,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                 ),
@@ -306,7 +306,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         title: const Text("Grade Management", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         elevation: 0,
         actions: [
@@ -416,12 +416,12 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
                                       child: ListTile(
                                         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                                         leading: CircleAvatar(
-                                          backgroundColor: Colors.orange[50],
-                                          child: const Icon(Icons.person, color: Colors.orange),
+                                          backgroundColor: Colors.lightBlue[50],
+                                          child: const Icon(Icons.person, color: Colors.lightBlue),
                                         ),
                                         title: Text(student['fullName'] ?? student['FullName'] ?? 'Unknown', style: const TextStyle(fontWeight: FontWeight.bold)),
                                         subtitle: Text("Roll: ${student['rollNumber'] ?? student['RollNumber'] ?? 'N/A'}"),
-                                        trailing: const Icon(Icons.edit_note, color: Colors.orange),
+                                        trailing: const Icon(Icons.edit_note, color: Colors.lightBlue),
                                         onTap: () => _showGradeDialog(student),
                                       ),
                                     );
@@ -458,7 +458,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
                 ],
               ),
             ),
-            const Icon(Icons.keyboard_arrow_down, color: Colors.orange),
+            const Icon(Icons.keyboard_arrow_down, color: Colors.lightBlue),
           ],
         ),
       ),

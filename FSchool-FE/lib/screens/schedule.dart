@@ -156,7 +156,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           'Timetable',
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.lightBlue,
         centerTitle: true,
         elevation: 0,
         leading: IconButton(
@@ -192,7 +192,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 IconButton(
-                  icon: const Icon(Icons.chevron_left, color: Colors.orange, size: 30),
+                  icon: const Icon(Icons.chevron_left, color: Colors.lightBlue, size: 30),
                   onPressed: _goToPreviousWeek,
                   tooltip: 'Previous week',
                 ),
@@ -209,12 +209,12 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     if (_isCurrentWeek())
                       const Text(
                         'This week',
-                        style: TextStyle(fontSize: 12, color: Colors.orange, fontWeight: FontWeight.w600),
+                        style: TextStyle(fontSize: 12, color: Colors.lightBlue, fontWeight: FontWeight.w600),
                       ),
                   ],
                 ),
                 IconButton(
-                  icon: const Icon(Icons.chevron_right, color: Colors.orange, size: 30),
+                  icon: const Icon(Icons.chevron_right, color: Colors.lightBlue, size: 30),
                   onPressed: _goToNextWeek,
                   tooltip: 'Next week',
                 ),
@@ -270,20 +270,20 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       width: 60,
                       margin: const EdgeInsets.symmetric(horizontal: 5),
                       decoration: BoxDecoration(
-                        color: isSelected ? Colors.orange : Colors.white,
+                        color: isSelected ? Colors.lightBlue : Colors.white,
                         borderRadius: BorderRadius.circular(15),
                         border: Border.all(
                           color: isSelected
-                              ? Colors.orange
+                              ? Colors.lightBlue
                               : isToday
-                                  ? Colors.orange.shade300
+                                  ? Colors.lightBlue.shade300
                                   : Colors.grey.shade200,
                           width: isToday && !isSelected ? 2 : 1,
                         ),
                         boxShadow: isSelected
                             ? [
                                 BoxShadow(
-                                  color: Colors.orange.withOpacity(0.4),
+                                  color: Colors.lightBlue.withOpacity(0.4),
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
                                 ),
@@ -317,7 +317,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               width: 6,
                               height: 6,
                               decoration: const BoxDecoration(
-                                color: Colors.orange,
+                                color: Colors.lightBlue,
                                 shape: BoxShape.circle,
                               ),
                             ),
@@ -382,7 +382,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     if (classInfo.status == 'Happening') {
       statusColor = Colors.green;
     } else if (classInfo.status == 'Upcoming') {
-      statusColor = Colors.orange;
+      statusColor = Colors.lightBlue;
     }
 
     return Container(
@@ -414,7 +414,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
           Container(
             width: 2,
             height: 100,
-            color: Colors.orange.withOpacity(0.3),
+            color: Colors.lightBlue.withOpacity(0.3),
             margin: const EdgeInsets.only(top: 5),
           ),
 
