@@ -9,7 +9,7 @@ class ClassService {
       List list = jsonDecode(response.body);
       return list.map((e) => e as Map<String, dynamic>).toList();
     } else {
-      throw Exception('Lỗi khi lấy danh sách lớp học');
+      throw Exception('Error fetching class list');
     }
   }
 
@@ -19,7 +19,7 @@ class ClassService {
       List list = jsonDecode(response.body);
       return list.map((e) => e as Map<String, dynamic>).toList();
     } else {
-      throw Exception('Lỗi khi lấy danh sách học sinh trong lớp');
+      throw Exception('Error fetching student list in class');
     }
   }
 
@@ -38,7 +38,7 @@ class ClassService {
 
     if (response.statusCode != 201) {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi tạo lớp học');
+      throw Exception(error['message'] ?? 'Error creating class');
     }
   }
 
@@ -58,7 +58,7 @@ class ClassService {
 
     if (response.statusCode != 200) {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi cập nhật lớp học');
+      throw Exception(error['message'] ?? 'Error updating class');
     }
   }
 
@@ -69,7 +69,7 @@ class ClassService {
 
     if (response.statusCode != 200) {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi xóa lớp học');
+      throw Exception(error['message'] ?? 'Error deleting class');
     }
   }
 }

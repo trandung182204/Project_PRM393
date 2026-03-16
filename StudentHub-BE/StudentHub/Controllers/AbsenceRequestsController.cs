@@ -16,14 +16,21 @@ namespace StudentHub.Controllers
             _context = context;
         }
 
-        // GET: api/absencerequests?accountId=1
+        // GET: api/absencerequests?accountId=1&staffId=1
         [HttpGet]
-        public async Task<IActionResult> GetAbsenceRequests([FromQuery] int? studentId, [FromQuery] int? accountId)
+        public async Task<IActionResult> GetAbsenceRequests([FromQuery] int? studentId, [FromQuery] int? accountId, [FromQuery] int? staffId)
         {
             var query = _context.AbsenceRequests
                 .Include(a => a.Student)
+                    .ThenInclude(s => s.SchoolClasses)
                 .Include(a => a.Slots)
                 .AsQueryable();
+
+            // Privacy: If no ID is provided, return empty list instead of everything
+            if (!studentId.HasValue && !accountId.HasValue && !staffId.HasValue)
+            {
+                return Ok(new List<object>());
+            }
 
             // Support filtering by accountId (from login) or direct studentId
             if (accountId.HasValue)
@@ -42,10 +49,61 @@ namespace StudentHub.Controllers
             {
                 query = query.Where(a => a.StudentId == studentId.Value);
             }
+            else if (staffId.HasValue)
+            {
+                // Filter by staff: only requests where the staff is teaching at least one of the requested slots on that date
+                query = query.Where(a => _context.Schedules.Any(s => 
+                    s.StaffId == staffId.Value &&
+                    s.Date.Date == a.Date.Date &&
+                    a.Slots.Select(sl => sl.Id).Contains(s.SlotId) &&
+                    s.SchoolClass.Students.Any(stu => stu.Id == a.StudentId)));
+            }
 
             var requests = await query
                 .OrderByDescending(a => a.CreatedDate)
-                .Select(a => new
+                .ToListAsync();
+
+            // Map to response with subject information
+            var result = new List<object>();
+            foreach (var a in requests)
+            {
+                var slotsDetail = new List<object>();
+                // Fallback to student's first class if no schedule class is found during the loop
+                string requestClassName = "N/A";
+                var firstClass = a.Student.SchoolClasses.FirstOrDefault();
+                if (firstClass != null && !string.IsNullOrWhiteSpace(firstClass.ClassName))
+                {
+                    requestClassName = firstClass.ClassName;
+                }
+
+                foreach (var s in a.Slots)
+                {
+                    // Find the subject for this student, date, and slot from schedule
+                    var schedule = await _context.Schedules
+                        .Include(sc => sc.Subject)
+                        .Include(sc => sc.SchoolClass)
+                        .ThenInclude(c => c.Students)
+                        .FirstOrDefaultAsync(sc => 
+                            sc.Date.Date == a.Date.Date && 
+                            sc.SlotId == s.Id && 
+                            sc.SchoolClass.Students.Any(stu => stu.Id == a.StudentId));
+
+                    if (schedule != null && schedule.SchoolClass != null && !string.IsNullOrWhiteSpace(schedule.SchoolClass.ClassName))
+                    {
+                        requestClassName = schedule.SchoolClass.ClassName;
+                    }
+
+                    slotsDetail.Add(new
+                    {
+                        id = s.Id,
+                        slotName = s.SlotName,
+                        startTime = s.StartTime.ToString(@"hh\:mm"),
+                        endTime = s.EndTime.ToString(@"hh\:mm"),
+                        subjectName = schedule?.Subject?.SubjectName ?? "N/A"
+                    });
+                }
+
+                result.Add(new
                 {
                     id = a.Id,
                     date = a.Date,
@@ -54,17 +112,12 @@ namespace StudentHub.Controllers
                     createdDate = a.CreatedDate,
                     studentId = a.StudentId,
                     studentName = a.Student.FullName,
-                    slots = a.Slots.Select(s => new
-                    {
-                        id = s.Id,
-                        slotName = s.SlotName,
-                        startTime = s.StartTime.ToString(@"hh\:mm"),
-                        endTime = s.EndTime.ToString(@"hh\:mm")
-                    })
-                })
-                .ToListAsync();
+                    className = requestClassName,
+                    slots = slotsDetail
+                });
+            }
 
-            return Ok(requests);
+            return Ok(result);
         }
 
         // GET: api/absencerequests/5

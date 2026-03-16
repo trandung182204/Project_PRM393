@@ -16,10 +16,8 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
   int? _studentId;
 
   String _selectedYear = 'All';
-  String _selectedSemester = 'All';
 
   List<String> _years = ['All'];
-  List<String> _semesters = ['All'];
 
   @override
   void initState() {
@@ -31,7 +29,6 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
     final filters = await _controller.fetchFilterOptions();
     setState(() {
       _years = ['All', ...filters['years']!];
-      _semesters = ['All', ...filters['semesters']!];
     });
   }
 
@@ -50,14 +47,10 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
 
     setState(() => _isLoading = true);
 
-    final semesterFilter = _selectedSemester == 'All'
-        ? null
-        : _selectedSemester;
     final yearFilter = _selectedYear == 'All' ? null : _selectedYear;
 
     final results = await _controller.fetchGrades(
       _studentId!,
-      semester: semesterFilter,
       scholastic: yearFilter,
     );
 
@@ -67,7 +60,7 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
     });
   }
 
-  // --- HÀM TÍNH ĐIỂM TRUNG BÌNH ---
+  // --- AVERAGE SCORE CALCULATION ---
   double get _averageScore {
     if (_grades.isEmpty) return 0.0;
     double sum = 0;
@@ -77,7 +70,7 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
     return sum / _grades.length;
   }
 
-  // --- HÀM XẾP LOẠI ---
+  // --- ACADEMIC RANKING ---
   String get _academicRank {
     double avg = _averageScore;
     if (avg >= 9.0) return 'Excellent';
@@ -121,32 +114,14 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
           Container(
             padding: const EdgeInsets.all(16.0),
             color: Colors.white,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _buildDropdown(
-                    value: _selectedYear,
-                    items: _years,
-                    label: "Scholastic",
-                    onChanged: (val) {
-                      setState(() => _selectedYear = val!);
-                      _fetchGrades();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: _buildDropdown(
-                    value: _selectedSemester,
-                    items: _semesters,
-                    label: "Semester",
-                    onChanged: (val) {
-                      setState(() => _selectedSemester = val!);
-                      _fetchGrades();
-                    },
-                  ),
-                ),
-              ],
+            child: _buildDropdown(
+              value: _selectedYear,
+              items: _years,
+              label: "Scholastic",
+              onChanged: (val) {
+                setState(() => _selectedYear = val!);
+                _fetchGrades();
+              },
             ),
           ),
 
@@ -381,7 +356,7 @@ class _MarkReportScreenState extends State<MarkReportScreen> {
     );
   }
 
-  // Helper Widget cho Dropdown
+  // Helper Widget for Dropdown
   Widget _buildDropdown({
     required String value,
     required List<String> items,

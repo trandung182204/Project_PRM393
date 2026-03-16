@@ -25,13 +25,13 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  // Các biến lưu giá trị đang được chọn
+  // Variables to store selected values
   String selectedYear = '2026';
   String selectedWeek = '02/03 To 08/03';
 
   @override
   Widget build(BuildContext context) {
-    // Tăng chiều rộng cột 0 lên một chút để chứa vừa Dropdown
+    // Slightly increase column 0 width to fit the dropdown
     final Map<int, TableColumnWidth> columnWidths = {
       0: const FixedColumnWidth(110),
       for (int i = 1; i <= 7; i++) i: const FixedColumnWidth(150),
@@ -55,7 +55,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                 children: [
                   _buildHeaderRow1(),
                   _buildHeaderRow2(),
-                  // Các slot từ 0 đến 12
+                  // Slots from 0 to 12
                   _buildEmptySlotRow("Slot 0"),
                   _buildEmptySlotRow("Slot 1"),
                   _buildSlot2Row(),
@@ -71,12 +71,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  // Header Dòng 1
+  // Header Row 1
   TableRow _buildHeaderRow1() {
     return TableRow(
       decoration: const BoxDecoration(color: Color(0xFF03A9F4)), // Light Blue primary
       children: [
-        _yearDropdownCell(), // Sử dụng Dropdown cho Year
+        _yearDropdownCell(), // Use Dropdown for Year
         _headerCell("MON", isWhite: true),
         _headerCell("TUE", isWhite: true),
         _headerCell("WED", isWhite: true),
@@ -88,12 +88,12 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  // Header Dòng 2
+  // Header Row 2
   TableRow _buildHeaderRow2() {
     return TableRow(
       decoration: const BoxDecoration(color: Color(0xFFB3E5FC)), // Light Blue secondary
       children: [
-        _weekDropdownCell(), // Sử dụng Dropdown cho Week
+        _weekDropdownCell(), // Use Dropdown for Week
         _headerCell("02/03"),
         _headerCell("03/03"),
         _headerCell("04/03"),
@@ -105,7 +105,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  // --- Widget Dropdown cho YEAR ---
+  // --- Widget Dropdown for YEAR ---
   Widget _yearDropdownCell() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
@@ -157,7 +157,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  // --- Widget Dropdown cho WEEK ---
+  // --- Widget Dropdown for WEEK ---
   Widget _weekDropdownCell() {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 4),
@@ -210,7 +210,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     );
   }
 
-  // --- Các Widget bên dưới giữ nguyên ---
+  // --- The widgets below remain the same ---
 
   TableRow _buildEmptySlotRow(String slotName) {
     return TableRow(

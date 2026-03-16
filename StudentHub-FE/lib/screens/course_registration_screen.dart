@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../controllers/registration_controller.dart';
 import '../services/subject_service.dart';
-import '../services/semester_service.dart';
 
 class CourseRegistrationScreen extends StatefulWidget {
   final int studentId;
@@ -14,13 +13,10 @@ class CourseRegistrationScreen extends StatefulWidget {
 class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
   final _registrationController = RegistrationController();
   final _subjectService = SubjectService();
-  final _semesterService = SemesterService();
 
   List<Map<String, dynamic>> _subjects = [];
-  List<Map<String, dynamic>> _semesters = [];
   
   int? _selectedSubjectId;
-  int? _selectedSemesterId;
   bool _isLoading = true;
   bool _isModifying = false;
 
@@ -34,12 +30,10 @@ class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
     try {
       final results = await Future.wait([
         _subjectService.getSubjects(),
-        _semesterService.getSemesters(),
       ]);
       
       setState(() {
         _subjects = results[0];
-        _semesters = results[1];
         _isLoading = false;
       });
     } catch (e) {
@@ -48,8 +42,8 @@ class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
   }
 
   Future<void> _handleRegister() async {
-    if (_selectedSubjectId == null || _selectedSemesterId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Vui lòng chọn môn học và học kỳ')));
+    if (_selectedSubjectId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please select a subject')));
       return;
     }
 
@@ -58,10 +52,10 @@ class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
       await _registrationController.registerSubject(
         studentId: widget.studentId,
         subjectId: _selectedSubjectId!,
-        semesterId: _selectedSemesterId!,
+        semesterId: 1, // Default or placeholder
       );
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Đăng ký thành công!')));
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Registration successful!')));
         Navigator.pop(context);
       }
     } catch (e) {
@@ -74,7 +68,7 @@ class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Đăng ký môn học')),
+      appBar: AppBar(title: const Text('Course Registration')),
       body: _isLoading 
         ? const Center(child: CircularProgressIndicator())
         : Padding(
@@ -82,27 +76,17 @@ class _CourseRegistrationScreenState extends State<CourseRegistrationScreen> {
             child: Column(
               children: [
                 DropdownButtonFormField<int>(
-                  decoration: const InputDecoration(labelText: 'Chọn môn học'),
+                  decoration: const InputDecoration(labelText: 'Select Subject'),
                   items: _subjects.map((s) => DropdownMenuItem<int>(
                     value: s['id'],
                     child: Text(s['subjectName']),
                   )).toList(),
                   onChanged: (v) => setState(() => _selectedSubjectId = v),
                 ),
-                const SizedBox(height: 16),
-                DropdownButtonFormField<int>(
-                   decoration: const InputDecoration(labelText: 'Chọn học kỳ'),
-                   value: _selectedSemesterId,
-                   items: _semesters.map((s) => DropdownMenuItem<int>(
-                     value: s['id'],
-                     child: Text(s['name']),
-                   )).toList(),
-                   onChanged: (v) => setState(() => _selectedSemesterId = v),
-                ),
                 const SizedBox(height: 32),
                 ElevatedButton(
                   onPressed: _isModifying ? null : _handleRegister,
-                  child: _isModifying ? const CircularProgressIndicator() : const Text('ĐĂNG KÝ'),
+                  child: _isModifying ? const CircularProgressIndicator() : const Text('REGISTER'),
                 )
               ],
             ),

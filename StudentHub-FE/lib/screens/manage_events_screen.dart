@@ -133,7 +133,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? '${event.title} đã được duyệt!' : 'Lỗi!'),
+          content: Text(success ? '${event.title} has been approved!' : 'Error!'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );
@@ -146,7 +146,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> with SingleTick
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? '${event.title} đã được publish!' : 'Lỗi!'),
+          content: Text(success ? '${event.title} has been published!' : 'Error!'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );

@@ -14,13 +14,11 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
   final GradeController _gradeController = GradeController();
 
   List<Map<String, dynamic>> _classes = [];
-  List<Map<String, dynamic>> _semesters = [];
   List<Map<String, dynamic>> _subjects = [];
   List<Map<String, dynamic>> _students = [];
   List<Map<String, dynamic>> _filteredStudents = [];
 
   Map<String, dynamic>? _selectedClass;
-  Map<String, dynamic>? _selectedSemester;
   Map<String, dynamic>? _selectedSubject;
 
   bool _isLoading = true;
@@ -80,7 +78,6 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
 
       List<Map<String, dynamic>> classes = [];
       List<Map<String, dynamic>> subjects = [];
-      List<Map<String, dynamic>> semesters = [];
       
       if (staffId != null && staffId > 0) {
         classes = await _gradeController.fetchClassesByStaff(staffId);
@@ -91,13 +88,10 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
         subjects = await _gradeController.fetchSubjects();
         debugPrint("ManageGrades: Fetched ${classes.length} total classes and ${subjects.length} total subjects (Admin/Fallback)");
       }
-      
-      semesters = await _gradeController.fetchSemesters();
 
       setState(() {
         _classes = classes;
         _subjects = subjects;
-        _semesters = semesters;
         if (_classes.isEmpty && staffId != null) {
           _errorMessage = "No classes found for this teacher in the schedule.";
         }
@@ -160,12 +154,11 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
   }
 
   void _showGradeDialog(Map<String, dynamic> student) async {
-    final semesterId = _selectedSemester?['id'] ?? _selectedSemester?['Id'];
     final subjectId = _selectedSubject?['id'] ?? _selectedSubject?['Id'];
-    
-    if (semesterId == null || subjectId == null) {
+
+    if (subjectId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Please select a semester and subject first")));
+          const SnackBar(content: Text("Please select a subject first")));
       return;
     }
 
@@ -174,7 +167,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
     // Attempt to fetch existing grade for this specific subject/semester
     GradeModel? existingGrade;
     try {
-      final grades = await _gradeController.fetchGrades(studentId, semester: _selectedSemester?['name'] ?? _selectedSemester?['Name']);
+      final grades = await _gradeController.fetchGrades(studentId);
       existingGrade = grades.where((g) => g.subjectName == (_selectedSubject?['subjectName'] ?? _selectedSubject?['SubjectName'])).firstOrNull;
     } catch (e) {
       debugPrint("Error fetching existing grade: $e");
@@ -207,7 +200,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(student['fullName'] ?? student['FullName'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                Text("${_selectedSubject?['subjectName'] ?? _selectedSubject?['SubjectName']} - ${_selectedSemester?['name'] ?? _selectedSemester?['Name']}", 
+                Text("${_selectedSubject?['subjectName'] ?? _selectedSubject?['SubjectName']}", 
                    style: const TextStyle(fontSize: 12, color: Colors.grey)),
               ],
             ),
@@ -268,7 +261,7 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
                     "finalTestScore": finalScore,
                     "studentId": studentId,
                     "subjectId": subjectId,
-                    "semesterId": semesterId,
+                    "semesterId": 1, // Fallback to a default semester ID if backend requires it
                   });
 
                   if (success) {
@@ -351,34 +344,15 @@ class _ManageGradesScreenState extends State<ManageGradesScreen> {
                             ),
                           ),
                           const SizedBox(height: 12),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: _buildSelector(
-                                  label: "Semester",
-                                  value: (_selectedSemester?['name'] ?? _selectedSemester?['Name']) ?? "Select Semester",
-                                  onTap: () => _showSearchSelection(
-                                    title: "Select Semester",
-                                    items: _semesters,
-                                    labelField: 'name',
-                                    onSelected: (item) => setState(() => _selectedSemester = item),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: _buildSelector(
-                                  label: "Subject",
-                                  value: (_selectedSubject?['subjectName'] ?? _selectedSubject?['SubjectName']) ?? "Select Subject",
-                                  onTap: () => _showSearchSelection(
-                                    title: "Select Subject",
-                                    items: _subjects,
-                                    labelField: 'subjectName',
-                                    onSelected: (item) => setState(() => _selectedSubject = item),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          _buildSelector(
+                            label: "Subject",
+                            value: (_selectedSubject?['subjectName'] ?? _selectedSubject?['SubjectName']) ?? "Select Subject",
+                            onTap: () => _showSearchSelection(
+                              title: "Select Subject",
+                              items: _subjects,
+                              labelField: 'subjectName',
+                              onSelected: (item) => setState(() => _selectedSubject = item),
+                            ),
                           ),
                         ],
                       ),

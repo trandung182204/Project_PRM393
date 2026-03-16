@@ -100,7 +100,7 @@ class _ManageClubsScreenState extends State<ManageClubsScreen> with SingleTicker
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(success ? '${club.name} đã được duyệt!' : 'Lỗi khi duyệt CLB'),
+          content: Text(success ? '${club.name} has been approved!' : 'Error approving club'),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
       );

@@ -4,6 +4,7 @@ class Schedule {
   final String date;
   final String time;
   final String subject;
+  final String className;
   final String room;
   final String teacher;
   final String status;
@@ -14,6 +15,7 @@ class Schedule {
     required this.date,
     required this.time,
     required this.subject,
+    required this.className,
     required this.room,
     required this.teacher,
     required this.status,
@@ -26,6 +28,7 @@ class Schedule {
       date: json['date'] ?? '',
       time: json['time'] ?? '',
       subject: json['subject'] ?? '',
+      className: json['className'] ?? '',
       room: json['room'] ?? '',
       teacher: json['teacher'] ?? '',
       status: json['status'] ?? '',

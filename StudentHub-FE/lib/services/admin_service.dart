@@ -32,7 +32,7 @@ class AdminService {
       return jsonDecode(response.body);
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi tạo tài khoản');
+      throw Exception(error['message'] ?? 'Error creating account');
     }
   }
 }

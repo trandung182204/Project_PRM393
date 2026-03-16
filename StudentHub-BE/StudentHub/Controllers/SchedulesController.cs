@@ -38,6 +38,7 @@ namespace StudentHub.Controllers
                 .Include(s => s.Subject)
                 .Include(s => s.Room)
                 .Include(s => s.Staff)
+                .Include(s => s.SchoolClass)
                 .Where(s => s.Date.Date >= from && s.Date.Date <= to)
                 .AsQueryable();
 
@@ -59,9 +60,10 @@ namespace StudentHub.Controllers
                     date = s.Date,
                     slotId = s.SlotId,
                     time = $"{s.Slot.StartTime:hh\\:mm} - {s.Slot.EndTime:hh\\:mm}",
-                    subject = s.Subject.SubjectName,
-                    room = s.Room.RoomName,
-                    teacher = s.Staff.FullName,
+                    subject = s.Subject != null ? s.Subject.SubjectName : "N/A",
+                    className = (s.SchoolClass != null && !string.IsNullOrWhiteSpace(s.SchoolClass.ClassName)) ? s.SchoolClass.ClassName : "N/A",
+                    room = s.Room != null ? s.Room.RoomName : "N/A",
+                    teacher = s.Staff != null ? s.Staff.FullName : "N/A",
                     status = s.Date < DateTime.Now ? "Finished" : (s.Date.Date == DateTime.Now.Date ? "Happening" : "Upcoming")
                 })
                 .ToListAsync();
