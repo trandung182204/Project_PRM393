@@ -1,9 +1,17 @@
 import 'package:flutter/foundation.dart';
 
 class ApiConfig {
-  static const String baseUrl = kIsWeb 
-    ? "http://localhost:5047/api" 
-    : "http://10.0.2.2:5047/api";
+  static const String _scheme = String.fromEnvironment('API_SCHEME', defaultValue: 'http');
+  static const String _host = String.fromEnvironment(
+    'API_HOST', 
+    defaultValue: kIsWeb ? 'localhost' : '10.0.2.2'
+  );
+  static const String _port = String.fromEnvironment(
+    'API_PORT', 
+    defaultValue: _scheme == 'https' ? '7221' : '5047'
+  );
+
+  static const String baseUrl = "$_scheme://$_host:$_port/api";
 
   // Auth endpoints
   static const String login = "$baseUrl/Auth/login";
