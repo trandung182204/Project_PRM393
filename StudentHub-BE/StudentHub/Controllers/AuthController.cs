@@ -1,5 +1,7 @@
+using System.Security.Claims;
 using Application.DTOs.Auth;
 using Application.Interfaces.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -49,6 +51,23 @@ namespace StudentHub.Controllers
         {
             var response = await _authService.GoogleLoginAsync(request.IdToken);
             return Ok(response);
+        }
+        
+        
+        [HttpPost("change-password")]
+        [Authorize]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestDto request)
+        {
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+            if (userIdClaim == null) return Unauthorized();
+
+            if (!int.TryParse(userIdClaim.Value, out int accountId))
+            {
+                return BadRequest("Invalid user ID in token.");
+            }
+
+            await _authService.ChangePasswordAsync(accountId, request);
+            return Ok(new { message = "Đổi mật khẩu thành công." });
         }
     }
 }

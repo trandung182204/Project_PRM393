@@ -215,5 +215,24 @@ namespace Application.Services
                 StaffId = account.Staff?.Id
             };
         }
+        public async Task ChangePasswordAsync(int accountId, ChangePasswordRequestDto request)
+        {
+            var account = await _accountRepository.GetByIdAsync(accountId);
+            if (account == null) throw new NotFoundException("Tài khoản không tồn tại.");
+
+            if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, account.PasswordHash))
+            {
+                throw new BadRequestException("Mật khẩu cũ không chính xác.");
+            }
+
+            if (request.NewPassword != request.ConfirmPassword)
+            {
+                throw new BadRequestException("Mật khẩu xác nhận không khớp.");
+            }
+
+            account.PasswordHash = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
+            await _accountRepository.UpdateAsync(account);
+        }
     }
+    
 }

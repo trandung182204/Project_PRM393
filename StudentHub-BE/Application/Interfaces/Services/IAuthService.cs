@@ -16,5 +16,8 @@ namespace Application.Interfaces.Services
         Task LogoutAsync();
         Task CreateAccountAsync(CreateAccountDto request);
         Task<AuthResponseDto> GoogleLoginAsync(string idToken);
+        
+        Task ChangePasswordAsync(int accountId, ChangePasswordRequestDto request);
+
     }
 }
