@@ -84,9 +84,17 @@ class SettingsScreen extends StatelessWidget {
               icon: Icons.lock_outline,
               title: 'Change Password',
               onTap: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Feature not implemented yet')),
-                );
+                if (args?.accessToken != null) {
+                  Navigator.pushNamed(
+                    context,
+                    '/change_password',
+                    arguments: args.accessToken,
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Không tìm thấy token đăng nhập')),
+                  );
+                }
               },
             ),
             _buildSettingsItem(
@@ -102,7 +110,9 @@ class SettingsScreen extends StatelessWidget {
             _buildSettingsItem(
               icon: Icons.info_outline,
               title: 'About App',
-              onTap: () {},
+              onTap: () {
+                Navigator.pushNamed(context, '/about_app');
+              },
             ),
 
             const SizedBox(height: 32),

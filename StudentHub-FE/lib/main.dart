@@ -1,3 +1,5 @@
+import 'package:bai1/screens/about_app.dart';
+import 'package:bai1/screens/change_password.dart';
 import 'package:bai1/screens/club_details.dart';
 import 'package:bai1/screens/clubs.dart';
 import 'package:bai1/screens/create_report.dart';
@@ -79,6 +81,10 @@ class MyApp extends StatelessWidget {
         ),
         "/schedule_table": (context) => TableApp(),
         "/settings": (context) => const SettingsScreen(),
+        "/change_password": (context) => ChangePasswordScreen(
+          token: ModalRoute.of(context)?.settings.arguments as String,
+        ),
+        "/about_app": (context) => const AboutAppScreen(),
         "/admin_account": (context) => const AdminAccountScreen(),
         "/course_registration": (context) => CourseRegistrationScreen(
           studentId: (ModalRoute.of(context)?.settings.arguments as int?) ?? 0,

@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bai1/config/api_config.dart';
 import 'package:bai1/models/auth_response.dart';
+import 'package:bai1/models/change_password_request.dart';
 import 'package:bai1/models/login_request.dart';
 import 'package:bai1/models/reset_password_request.dart';
 
@@ -19,7 +20,42 @@ class AuthService {
       final data = jsonDecode(response.body);
       return AuthResponse.fromJson(data);
     } else {
-      throw Exception("Login failed");
+      String message = "Login failed";
+      try {
+        if (response.body.isNotEmpty) {
+          final error = jsonDecode(response.body);
+          message = error['Message'] ?? message;
+        }
+      } catch (_) {}
+      throw Exception(message);
+    }
+  }
+
+  Future<bool> changePassword(ChangePasswordRequest request, String token) async {
+    final response = await http.post(
+      Uri.parse(ApiConfig.changePassword),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode(request.toJson()),
+    );
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      String message = "Đổi mật khẩu thất bại.";
+      try {
+        if (response.body.isNotEmpty) {
+          final error = jsonDecode(response.body);
+          message = error['Message'] ?? message;
+        } else {
+          message = "Lỗi từ server (${response.statusCode})";
+        }
+      } catch (e) {
+        message = "Lỗi hệ thống: ${response.statusCode}";
+      }
+      throw Exception(message);
     }
   }
 
@@ -33,13 +69,17 @@ class AuthService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      // Read error from .NET ExceptionMiddleware
-      final error = jsonDecode(response.body);
-      throw Exception(error['Message'] ?? "Failed to send code.");
+      String message = "Gửi mã thất bại.";
+      try {
+        if (response.body.isNotEmpty) {
+          final error = jsonDecode(response.body);
+          message = error['Message'] ?? message;
+        }
+      } catch (_) {}
+      throw Exception(message);
     }
   }
 
-  // 2. Reset password
   Future<bool> resetPassword(ResetPasswordRequest request) async {
     final response = await http.post(
       Uri.parse('${ApiConfig.baseUrl}/auth/forgot-password/reset'),
@@ -50,9 +90,14 @@ class AuthService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      // Catch message like: "OTP code expired or does not exist."
-      final error = jsonDecode(response.body);
-      throw Exception(error['Message'] ?? "Password reset failed.");
+      String message = "Đổi mật khẩu thất bại.";
+      try {
+        if (response.body.isNotEmpty) {
+          final error = jsonDecode(response.body);
+          message = error['Message'] ?? message;
+        }
+      } catch (_) {}
+      throw Exception(message);
     }
   }
 

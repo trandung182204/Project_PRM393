@@ -15,6 +15,8 @@ class ApiConfig {
 
   // Auth endpoints
   static const String login = "$baseUrl/Auth/login";
+  // Thử lại với chữ 'Auth' viết hoa cho đồng bộ với login/logout
+  static const String changePassword = "$baseUrl/Auth/change-password";
 
   // User endpoints
   static const String getProfile = "$baseUrl/users/profile";
@@ -39,17 +41,9 @@ class ApiConfig {
   static const String proposeClub = "$baseUrl/clubs/propose";
   static const String pendingClubs = "$baseUrl/clubs/pending";
   static const String allClubs = "$baseUrl/clubs/all";
-  // Usage: "$getClubs/$id/approve", "$getClubs/$id/join?studentId=$sid"
-  // "$getClubs/$id/members", "$getClubs/$id/members/$sid/approve"
-  // "$getClubs/$id/members/$sid/role", "$getClubs/$id/members/$sid/leave"
-  // "$getClubs/$id/my-status?studentId=$sid"
 
   // Event Lifecycle endpoints
   static const String proposeEvent = "$baseUrl/events/propose";
   static const String pendingEvents = "$baseUrl/events/pending";
   static const String allEvents = "$baseUrl/events/all";
-  // Usage: "$getEvents/$id/approve", "$getEvents/$id/publish"
-  // "$getEvents/$id/register?studentId=$sid", "$getEvents/$id/checkin/$sid"
-  // "$getEvents/$id/complete", "$getEvents/$id/registrations"
-  // "$getEvents/$id/my-status?studentId=$sid", "$getEvents/$id/cancel"
 }
