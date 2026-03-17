@@ -27,7 +27,7 @@ namespace Application.Services
 
         public async Task<AuthResponseDto> LoginAsync(LoginRequestDto request)
         {
-            var account = await _accountRepository.GetByPhoneNumberAsync(request.Phone);
+            var account = await _accountRepository.GetByEmailAsync(request.Email);
 
            
             if (account == null || !BCrypt.Net.BCrypt.Verify(request.Password, account.PasswordHash))

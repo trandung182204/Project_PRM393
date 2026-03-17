@@ -22,6 +22,7 @@ namespace StudentHub.Controllers
         public async Task<IActionResult> GetSchedules(
             [FromQuery] int? classId,
             [FromQuery] int? staffId,
+            [FromQuery] int? studentId,
             [FromQuery] DateTime? fromDate,
             [FromQuery] DateTime? toDate)
         {
@@ -39,6 +40,7 @@ namespace StudentHub.Controllers
                 .Include(s => s.Room)
                 .Include(s => s.Staff)
                 .Include(s => s.SchoolClass)
+                .Include(s => s.Attendances)
                 .Where(s => s.Date.Date >= from && s.Date.Date <= to)
                 .AsQueryable();
 
@@ -64,7 +66,12 @@ namespace StudentHub.Controllers
                     className = (s.SchoolClass != null && !string.IsNullOrWhiteSpace(s.SchoolClass.ClassName)) ? s.SchoolClass.ClassName : "N/A",
                     room = s.Room != null ? s.Room.RoomName : "N/A",
                     teacher = s.Staff != null ? s.Staff.FullName : "N/A",
-                    status = s.Date < DateTime.Now ? "Finished" : (s.Date.Date == DateTime.Now.Date ? "Happening" : "Upcoming")
+                    status = s.Date < DateTime.Now ? "Finished" : (s.Date.Date == DateTime.Now.Date ? "Happening" : "Upcoming"),
+                    attendanceStatus = studentId.HasValue 
+                        ? s.Attendances.FirstOrDefault(a => a.StudentId == studentId.Value) != null 
+                            ? s.Attendances.FirstOrDefault(a => a.StudentId == studentId.Value).Status 
+                            : "Not Yet"
+                        : "Not Yet"
                 })
                 .ToListAsync();
 
