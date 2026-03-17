@@ -33,13 +33,13 @@ class AuthService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      // Đọc lỗi từ ExceptionMiddleware của .NET trả về
+      // Read error from .NET ExceptionMiddleware
       final error = jsonDecode(response.body);
-      throw Exception(error['Message'] ?? "Gửi mã thất bại.");
+      throw Exception(error['Message'] ?? "Failed to send code.");
     }
   }
 
-  // 2. Reset mật khẩu
+  // 2. Reset password
   Future<bool> resetPassword(ResetPasswordRequest request) async {
     final response = await http.post(
       Uri.parse('${ApiConfig.baseUrl}/auth/forgot-password/reset'),
@@ -50,9 +50,9 @@ class AuthService {
     if (response.statusCode == 200) {
       return true;
     } else {
-      // Sẽ tóm được dòng: "Mã OTP đã hết hạn hoặc không tồn tại."
+      // Catch message like: "OTP code expired or does not exist."
       final error = jsonDecode(response.body);
-      throw Exception(error['Message'] ?? "Đổi mật khẩu thất bại.");
+      throw Exception(error['Message'] ?? "Password reset failed.");
     }
   }
 

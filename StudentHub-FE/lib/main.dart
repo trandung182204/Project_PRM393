@@ -19,6 +19,7 @@ import 'package:bai1/screens/manage_events_screen.dart';
 import 'package:bai1/screens/manage_absence_requests_screen.dart';
 import 'package:bai1/screens/manage_clubs_screen.dart';
 import 'package:bai1/screens/manage_schedule_screen.dart';
+import 'package:bai1/screens/manage_subjects_screen.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -87,6 +88,7 @@ class MyApp extends StatelessWidget {
         "/manage_clubs": (context) => const ManageClubsScreen(),
         "/manage_absences": (context) => const ManageAbsenceRequestsScreen(),
         "/manage_schedule": (context) => const ManageScheduleScreen(),
+        "/manage_subjects": (context) => const ManageSubjectsScreen(),
       },
     );
   }

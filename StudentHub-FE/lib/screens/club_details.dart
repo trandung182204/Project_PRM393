@@ -48,8 +48,8 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
         SnackBar(
           content: Text(
             success
-                ? 'Đã gửi đơn xin gia nhập ${widget.club['name']}!'
-                : 'Không thể gửi đơn. Có thể bạn đã là thành viên.',
+                ? 'Join request sent to ${widget.club['name']}!'
+                : 'Failed to send request. You might already be a member.',
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -209,7 +209,7 @@ class _ClubDetailScreenState extends State<ClubDetailScreen> {
                       onPressed: _hasJoined ? null : _joinClub,
                       child: Text(
                         _hasJoined
-                            ? (_membershipStatus == 'Pending' ? "Đang chờ duyệt..." : "Đã là thành viên")
+                            ? (_membershipStatus == 'Pending' ? "Pending Approval..." : "Already a Member")
                             : "Join Club",
                         style: const TextStyle(color: Colors.white, fontSize: 18),
                       ),

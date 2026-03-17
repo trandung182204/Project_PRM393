@@ -4,9 +4,9 @@ import 'package:bai1/services/absence_request_service.dart';
 class AbsenceRequestController {
   final AbsenceRequestService _service = AbsenceRequestService();
 
-  Future<List<AbsenceRequestModel>> fetchAbsenceRequests({int? accountId, int? classId}) async {
+  Future<List<AbsenceRequestModel>> fetchAbsenceRequests({int? accountId, int? classId, int? staffId}) async {
     try {
-      return await _service.getAbsenceRequests(accountId: accountId, classId: classId);
+      return await _service.getAbsenceRequests(accountId: accountId, classId: classId, staffId: staffId);
     } catch (e) {
       print("Error fetching absence requests: $e");
       return [];

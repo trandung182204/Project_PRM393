@@ -22,7 +22,7 @@ class RegistrationService {
       return jsonDecode(response.body);
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi đăng ký môn học');
+      throw Exception(error['message'] ?? 'Error registering subject');
     }
   }
 
@@ -43,7 +43,7 @@ class RegistrationService {
       return jsonDecode(response.body);
     } else {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi xếp lớp');
+      throw Exception(error['message'] ?? 'Error assigning to class');
     }
   }
 
@@ -62,7 +62,7 @@ class RegistrationService {
 
     if (response.statusCode != 200) {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi xếp lớp hàng loạt');
+      throw Exception(error['message'] ?? 'Error in batch class assignment');
     }
   }
 
@@ -81,7 +81,7 @@ class RegistrationService {
 
     if (response.statusCode != 200) {
       final error = jsonDecode(response.body);
-      throw Exception(error['message'] ?? 'Lỗi khi xóa sinh viên khỏi lớp');
+      throw Exception(error['message'] ?? 'Error removing student from class');
     }
   }
 }

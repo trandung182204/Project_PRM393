@@ -9,7 +9,7 @@ class SemesterService {
       List list = jsonDecode(response.body);
       return list.map((e) => e as Map<String, dynamic>).toList();
     } else {
-      throw Exception('Lỗi khi lấy danh sách học kỳ');
+      throw Exception('Error fetching semester list');
     }
   }
 }

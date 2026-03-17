@@ -14,13 +14,13 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
 
-  // 2. Hàm xử lý khi nhấn nút Send OTP
+  // 2. Handle Send OTP button click
   void _handleSendOtp() async {
     final phone = _phoneController.text.trim();
 
     if (phone.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vui lòng nhập số điện thoại")),
+        const SnackBar(content: Text("Please enter your phone number")),
       );
       return;
     }
@@ -28,11 +28,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Gọi tới API ở tầng Service
+      // Call API at the Service layer
       bool isSent = await _authService.sendOtp(phone);
 
       if (isSent) {
-        // Nếu thành công, chuyển sang màn hình ResetPassword và truyền kèm SĐT
+        // If successful, navigate to ResetPassword screen and pass the phone number
         if (!mounted) return;
         Navigator.push(
           context,
@@ -44,14 +44,14 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Gửi mã thất bại. Vui lòng kiểm tra lại SĐT"),
+            content: Text("Failed to send code. Please check your phone number."),
           ),
         );
       }
     } catch (e) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text("Lỗi: ${e.toString()}")));
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
     } finally {
       setState(() => _isLoading = false);
     }

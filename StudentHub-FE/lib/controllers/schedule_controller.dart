@@ -13,7 +13,7 @@ class ScheduleController {
     }
   }
 
-  /// Lấy lịch theo tuần cụ thể (fromDate -> toDate)
+  /// Fetch schedule for a specific week (fromDate -> toDate)
   Future<List<Schedule>> fetchSchedulesByWeek({
     int? classId,
     int? staffId,

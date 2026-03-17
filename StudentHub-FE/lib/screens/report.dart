@@ -17,8 +17,9 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchRequests();
   }
+
+  bool _isInitialized = false;
 
   int? _accountId;
   int? _classId;
@@ -26,18 +27,22 @@ class _ReportScreenState extends State<ReportScreen> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final args = ModalRoute.of(context)?.settings.arguments;
-    if (args != null) {
-      if (args is int) {
-        _accountId = args;
-      } else {
-        try {
-          _accountId = (args as dynamic).id;
-          _classId = (args as dynamic).classId;
-        } catch (e) {
-          debugPrint("ReportScreen: Error parsing arguments: $e");
+    if (!_isInitialized) {
+      final args = ModalRoute.of(context)?.settings.arguments;
+      if (args != null) {
+        if (args is int) {
+          _accountId = args;
+        } else {
+          try {
+            _accountId = (args as dynamic).id;
+            _classId = (args as dynamic).classId;
+          } catch (e) {
+            debugPrint("ReportScreen: Error parsing arguments: $e");
+          }
         }
       }
+      _fetchRequests();
+      _isInitialized = true;
     }
   }
 
@@ -139,9 +144,21 @@ class _ReportScreenState extends State<ReportScreen> {
     }
 
     // Build slot names for duration info
-    String slotInfo = item.slots.isNotEmpty
-        ? item.slots.map((s) => s.slotName).join(', ')
-        : 'N/A';
+    List<Widget> slotWidgets = item.slots.map((s) => Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          const Icon(Icons.label_important_outline, size: 14, color: Colors.lightBlue),
+          const SizedBox(width: 4),
+          Expanded(
+            child: Text(
+              "${s.slotName} (${s.startTime} - ${s.endTime}): ${s.subjectName}",
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+            ),
+          ),
+        ],
+      ),
+    )).toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -180,12 +197,15 @@ class _ReportScreenState extends State<ReportScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        const Text(
-                          'Request for Absent',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                        Expanded(
+                          child: Text(
+                            'Absence Request [${item.className}]',
+                            style: const TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black87,
+                            ),
+                            overflow: TextOverflow.ellipsis,
                           ),
                         ),
                         Container(
@@ -215,6 +235,11 @@ class _ReportScreenState extends State<ReportScreen> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Date: $displayDate",
+                      style: TextStyle(fontSize: 13, color: Colors.grey[600]),
+                    ),
                   ],
                 ),
               ),
@@ -223,13 +248,12 @@ class _ReportScreenState extends State<ReportScreen> {
           const SizedBox(height: 12),
           Divider(color: Colors.grey.shade100, height: 1),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _buildInfoColumn("Slots", slotInfo),
-              _buildInfoColumn("Date", displayDate),
-            ],
+          const Text(
+            "Lesson Details:",
+            style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
+          const SizedBox(height: 8),
+          ...slotWidgets,
           if (item.reason.isNotEmpty) ...[
             const SizedBox(height: 12),
             Container(
@@ -268,7 +292,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     }
                   },
                   icon: const Icon(Icons.edit, size: 16),
-                  label: const Text("Sửa"),
+                  label: const Text("Edit"),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.blue,
                     side: const BorderSide(color: Colors.blue),
@@ -281,7 +305,7 @@ class _ReportScreenState extends State<ReportScreen> {
                 OutlinedButton.icon(
                   onPressed: () => _showDeleteConfirmation(item.id),
                   icon: const Icon(Icons.delete, size: 16),
-                  label: const Text("Xóa"),
+                  label: const Text("Delete"),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: Colors.red,
                     side: const BorderSide(color: Colors.red),
@@ -302,12 +326,12 @@ class _ReportScreenState extends State<ReportScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xác nhận xóa"),
-        content: const Text("Bạn có chắc chắn muốn xóa đơn nghỉ này không?"),
+        title: const Text("Confirm Delete"),
+        content: const Text("Are you sure you want to delete this absence request?"),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text("Hủy"),
+            child: const Text("Cancel"),
           ),
           TextButton(
             onPressed: () async {
@@ -319,32 +343,15 @@ class _ReportScreenState extends State<ReportScreen> {
               } else {
                 setState(() => _isLoading = false);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text("Xóa thất bại")),
+                  const SnackBar(content: Text("Delete failed")),
                 );
               }
             },
-            child: const Text("Xóa", style: TextStyle(color: Colors.red)),
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildInfoColumn(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: TextStyle(fontSize: 12, color: Colors.grey[500])),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
-          ),
-        ),
-      ],
-    );
-  }
 }

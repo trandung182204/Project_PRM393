@@ -11,10 +11,6 @@ class CreateReportScreen extends StatefulWidget {
 }
 
 class _CreateReportScreenState extends State<CreateReportScreen> {
-  int _selectedRequestType = 0;
-
-  DateTime _fromDate = DateTime.now();
-  DateTime _toDate = DateTime.now();
   final TextEditingController _reasonController = TextEditingController();
 
   bool _isSelectAll = false;
@@ -51,12 +47,29 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
   Future<void> _fetchScheduleSlots() async {
     setState(() => _isLoadingSlots = true);
     
-    // Fetch schedules for the student's class
-    final schedules = await _scheduleController.fetchSchedules(classId: _classId);
-    
     final now = DateTime.now();
     
-    // Filter: Slots in the next 7 days (including today) AND not passed yet
+    // Calculate current week range (Monday to Sunday)
+    int daysUntilMonday = now.weekday - DateTime.monday;
+    DateTime mondayOfThisWeek = DateTime(now.year, now.month, now.day).subtract(Duration(days: daysUntilMonday));
+    DateTime sundayOfThisWeek = mondayOfThisWeek.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+
+    // Determine fetch range
+    DateTime fromDate = mondayOfThisWeek;
+    DateTime toDate = sundayOfThisWeek;
+
+    // "ít nhất phải đến chủ nhật của tuần này thì mới hiển thị cho tuần sau để xin absent"
+    if (now.weekday == DateTime.sunday) {
+      toDate = sundayOfThisWeek.add(const Duration(days: 7));
+    }
+
+    // Fetch schedules
+    final schedules = await _scheduleController.fetchSchedulesByWeek(
+      classId: _classId,
+      fromDate: fromDate,
+      toDate: toDate,
+    );
+    
     final List<Map<String, dynamic>> dynamicSlots = [];
     
     for (var s in schedules) {
@@ -77,20 +90,19 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         );
 
         // Conditions: 
-        // 1. Within 1 week from now
-        // 2. Not passed (start time is after now)
-        bool isWithinAWeek = slotDate.isAfter(now.subtract(const Duration(days: 1))) && 
-                             slotDate.isBefore(now.add(const Duration(days: 7)));
+        // 1. Not passed (start time is after now)
         bool isNotPassed = slotStartTime.isAfter(now);
 
-        if (isWithinAWeek && isNotPassed) {
+        if (isNotPassed) {
           dynamicSlots.add({
-            'id': s.slotId, // This is Slot.Id from backend
+            'id': s.slotId,
             'name': 'Slot: ${s.subject}',
             'time': s.time,
             'room': s.room,
+            'className': s.className,
             'isSelected': false,
             'date': s.date,
+            'subject': s.subject,
           });
         }
       } catch (e) {
@@ -105,45 +117,17 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
       return a['time'].compareTo(b['time']);
     });
 
-    setState(() {
-      _slots = dynamicSlots;
-      _isLoadingSlots = false;
-      
-      // If editing, re-apply selection
-      if (_editRequest != null) {
-        for (var slot in _slots) {
-          slot['isSelected'] = _editRequest!.slots.any((s) => s.id == slot['id']);
-        }
-        _isSelectAll = _slots.isNotEmpty && _slots.every((slot) => slot['isSelected'] == true);
-        
-        // Also update date if editing
-        _fromDate = DateTime.parse(_editRequest!.date);
-        _reasonController.text = _editRequest!.reason;
-      }
-    });
-  }
-
-  Future<void> _selectDate(BuildContext context, bool isFromDate) async {
-    final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: isFromDate ? _fromDate : _toDate,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2030),
-      builder: (context, child) {
-        return Theme(
-          data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(primary: Colors.lightBlue),
-          ),
-          child: child!,
-        );
-      },
-    );
-    if (picked != null) {
+    if (mounted) {
       setState(() {
-        if (isFromDate) {
-          _fromDate = picked;
-        } else {
-          _toDate = picked;
+        _slots = dynamicSlots;
+        _isLoadingSlots = false;
+        
+        if (_editRequest != null) {
+          for (var slot in _slots) {
+            slot['isSelected'] = _editRequest!.slots.any((s) => s.id == slot['id']);
+          }
+          _isSelectAll = _slots.isNotEmpty && _slots.every((slot) => slot['isSelected'] == true);
+          _reasonController.text = _editRequest!.reason;
         }
       });
     }
@@ -172,22 +156,15 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
       for (var slot in _slots) {
         slot['isSelected'] = false;
       }
-      _fromDate = DateTime.now();
-      _toDate = DateTime.now();
-      _selectedRequestType = 0;
     });
   }
 
   Future<void> _submitRequest() async {
-    // Validate
-    final selectedSlotIds = _slots
-        .where((s) => s['isSelected'] == true)
-        .map<int>((s) => s['id'] as int)
-        .toList();
+    final selectedSlots = _slots.where((s) => s['isSelected'] == true).toList();
 
-    if (selectedSlotIds.isEmpty) {
+    if (selectedSlots.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select at least one slot')),
+        const SnackBar(content: Text('Please select at least one lesson')),
       );
       return;
     }
@@ -201,44 +178,67 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
 
     setState(() => _isSubmitting = true);
 
-    bool success = false;
-    if (_editRequest != null) {
-       success = await _controller.updateAbsenceRequest(
-        id: _editRequest!.id,
-        date: _fromDate,
-        reason: _reasonController.text.trim(),
-        slotIds: selectedSlotIds,
-      );
-    } else {
-      final result = await _controller.submitAbsenceRequest(
-        date: _fromDate,
-        reason: _reasonController.text.trim(),
-        accountId: _accountId ?? 1,
-        slotIds: selectedSlotIds,
-      );
-      success = result != null;
+    // Group selected slots by date
+    Map<String, List<int>> groupedByDate = {};
+    for (var slot in selectedSlots) {
+      String dateKey = slot['date'];
+      if (!groupedByDate.containsKey(dateKey)) {
+        groupedByDate[dateKey] = [];
+      }
+      groupedByDate[dateKey]!.add(slot['id'] as int);
+    }
+
+    bool allSuccess = true;
+    
+    // Submit for each date
+    for (var entry in groupedByDate.entries) {
+      DateTime date = DateTime.parse(entry.key);
+      List<int> slotIds = entry.value;
+
+      bool success = false;
+      if (_editRequest != null && groupedByDate.length == 1 && date.isAtSameMomentAs(DateTime.parse(_editRequest!.date))) {
+         // Update existing if only one day selected and it's the same day
+         success = await _controller.updateAbsenceRequest(
+          id: _editRequest!.id,
+          date: date,
+          reason: _reasonController.text.trim(),
+          slotIds: slotIds,
+        );
+      } else {
+        if (_accountId == null) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Error: Account information not found. Please log in again.')),
+          );
+          return;
+        }
+
+        final result = await _controller.submitAbsenceRequest(
+          date: date,
+          reason: _reasonController.text.trim(),
+          accountId: _accountId!,
+          slotIds: slotIds,
+        );
+        success = result != null;
+      }
+      if (!success) allSuccess = false;
     }
 
     setState(() => _isSubmitting = false);
 
-    if (success) {
+    if (allSuccess) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_editRequest != null ? 'Cập nhật thành công!' : 'Đã gửi đơn nghỉ!')),
+        SnackBar(content: Text(_editRequest != null ? 'Update successful!' : 'Absence request submitted successfully!')),
       );
-      Navigator.pop(context, true); // return true to refresh list
+      Navigator.pop(context, true);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(_editRequest != null ? 'Cập nhật thất bại. Vui lòng thử lại.' : 'Gửi thất bại. Vui lòng thử lại.')),
+        const SnackBar(content: Text('Failed to submit some requests. Please check again.')),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String formattedFrom =
-        "${_fromDate.day}/${_fromDate.month}/${_fromDate.year}";
-    String formattedTo = "${_toDate.day}/${_toDate.month}/${_toDate.year}";
-
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
@@ -259,118 +259,35 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. REQUEST TYPE SELECTION
-            Row(
-              children: [
-                Expanded(
-                  child: _buildTypeCard(
-                    index: 0,
-                    icon: Icons.edit_document,
-                    label: "Request for Absent",
-                    isSelected: _selectedRequestType == 0,
+            // Removed Long Absent button as requested
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.blue.shade100),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.info_outline, color: Colors.blue),
+                  const SizedBox(width: 12),
+                  const Expanded(
+                    child: Text(
+                      "Please select specific lessons to request absence.",
+                      style: TextStyle(color: Colors.blue, fontWeight: FontWeight.w500),
+                    ),
                   ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: _buildTypeCard(
-                    index: 1,
-                    icon: Icons.plagiarism_outlined,
-                    label: "Request for Long Absent",
-                    isSelected: _selectedRequestType == 1,
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
 
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
 
-            // 2. DATE PICKERS
-            Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "From",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      InkWell(
-                        onTap: () => _selectDate(context, true),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(formattedFrom),
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 18,
-                                color: Colors.grey,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(width: 15),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        "To",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      const SizedBox(height: 5),
-                      InkWell(
-                        onTap: () => _selectDate(context, false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 10,
-                            horizontal: 10,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border.all(color: Colors.grey),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(formattedTo),
-                              const Icon(
-                                Icons.calendar_today,
-                                size: 18,
-                                color: Colors.grey,
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-
-            const SizedBox(height: 20),
-
-            // 3. LESSON OF THE DAY & SELECT ALL
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
-                  "Future Lessons (1 Week)",
+                  "Future Lessons (Current Week)",
                   style: TextStyle(
                     color: Colors.lightBlue,
                     fontWeight: FontWeight.bold,
@@ -393,16 +310,27 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
 
             if (_isLoadingSlots)
               const Center(child: Padding(
-                padding: EdgeInsets.all(20.0),
+                padding: EdgeInsets.all(40.0),
                 child: CircularProgressIndicator(),
               ))
             else if (_slots.isEmpty)
-              const Center(child: Padding(
-                padding: EdgeInsets.all(20.0),
-                child: Text("No future lessons found in this week."),
-              ))
+              Padding(
+                padding: const EdgeInsets.all(40.0),
+                child: Center(
+                  child: Column(
+                    children: [
+                      Icon(Icons.event_busy, size: 48, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        "No available lessons found this week.",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey[600]),
+                      ),
+                    ],
+                  ),
+                ),
+              )
             else
-            // 4. LIST OF SLOTS
             ..._slots.asMap().entries.map((entry) {
               int idx = entry.key;
               Map slot = entry.value;
@@ -415,48 +343,34 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               }
 
               return Container(
-                margin: const EdgeInsets.only(bottom: 15),
+                margin: const EdgeInsets.only(bottom: 12),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   border: Border.all(color: Colors.black12),
                   borderRadius: BorderRadius.circular(15),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 5,
-                      offset: const Offset(0, 2),
+                      color: Colors.black.withOpacity(0.03),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
                     ),
                   ],
                 ),
                 child: ListTile(
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   title: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: const TextStyle(color: Colors.black, fontSize: 16),
-                            children: [
-                              TextSpan(
-                                text: slot['name'].split(':').first + " : ",
-                                style: const TextStyle(fontWeight: FontWeight.normal),
-                              ),
-                              TextSpan(
-                                text: slot['name'].split(':').last,
-                                style: const TextStyle(
-                                  color: Colors.lightBlue,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                        child: Text(
+                          slot['subject'],
+                          style: const TextStyle(
+                            color: Colors.lightBlue,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
@@ -465,7 +379,7 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                         ),
                         child: Text(
                           displayDate,
-                          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.lightBlue),
+                          style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.lightBlue),
                         ),
                       ),
                     ],
@@ -473,23 +387,18 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
                   subtitle: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(height: 4),
+                      const SizedBox(height: 6),
                       Text(
-                        slot['time'],
-                        style: const TextStyle(color: Colors.black87),
+                        "Slot: ${idx + 1} (${slot['time']}) [${slot['className']}]",
+                        style: TextStyle(color: Colors.grey[700], fontSize: 13),
                       ),
+                      const SizedBox(height: 2),
                       Row(
                         children: [
-                          const Text(
-                            "Room : ",
-                            style: TextStyle(color: Colors.black87),
-                          ),
+                          const Text("Room: ", style: TextStyle(fontSize: 13)),
                           Text(
                             slot['room'],
-                            style: const TextStyle(
-                              color: Colors.lightBlue,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.lightBlue),
                           ),
                         ],
                       ),
@@ -504,152 +413,59 @@ class _CreateReportScreenState extends State<CreateReportScreen> {
               );
             }).toList(),
 
-            const SizedBox(height: 10),
+            const SizedBox(height: 20),
 
-            // 5. REASON INPUT
             const Text(
               "Reason",
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 12),
             TextField(
               controller: _reasonController,
               maxLines: 4,
               decoration: InputDecoration(
-                hintText: "Type here",
+                hintText: "Enter reason for absence...",
                 hintStyle: TextStyle(color: Colors.grey[400]),
+                filled: true,
+                fillColor: Colors.grey[50],
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                  borderSide: const BorderSide(color: Colors.grey),
-                ),
-                focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.lightBlue),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
 
-            const SizedBox(height: 30),
+            const SizedBox(height: 32),
 
-            // 6. BUTTONS (SEND & RESET)
             Row(
               children: [
                 Expanded(
                   child: ElevatedButton(
                     onPressed: _isSubmitting ? null : _submitRequest,
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue[400],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: Colors.lightBlue,
                     ),
                     child: _isSubmitting
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : Text(
-                            _editRequest != null ? "Update" : "Send",
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2))
+                        : const Text("Submit", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
                   ),
                 ),
-                const SizedBox(width: 20),
+                const SizedBox(width: 16),
                 Expanded(
-                  child: ElevatedButton(
+                  child: OutlinedButton(
                     onPressed: _resetForm,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.lightBlue[400],
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      padding: const EdgeInsets.symmetric(vertical: 12),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      side: const BorderSide(color: Colors.lightBlue),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text(
-                      "Reset",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+                    child: const Text("Reset", style: TextStyle(fontSize: 16, color: Colors.lightBlue)),
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTypeCard({
-    required int index,
-    required IconData icon,
-    required String label,
-    required bool isSelected,
-  }) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selectedRequestType = index;
-        });
-      },
-      child: Container(
-        height: 100,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? Colors.lightBlue : Colors.grey.shade400,
-            width: isSelected ? 2 : 1,
-          ),
-        ),
-        child: Stack(
-          children: [
-            Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, size: 30, color: Colors.black87),
-                  const SizedBox(height: 8),
-                  Text(
-                    label,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Positioned(
-              top: 8,
-              right: 8,
-              child: Container(
-                width: 20,
-                height: 20,
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: isSelected ? Colors.lightBlue : Colors.grey,
-                  ),
-                  borderRadius: BorderRadius.circular(4),
-                ),
-                child: isSelected
-                    ? const Icon(Icons.check, size: 16, color: Colors.lightBlue)
-                    : null,
-              ),
-            ),
+            const SizedBox(height: 40),
           ],
         ),
       ),

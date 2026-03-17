@@ -12,10 +12,10 @@ class ScheduleScreen extends StatefulWidget {
 }
 
 class _ScheduleScreenState extends State<ScheduleScreen> {
-  // Ngày đang chọn (Mặc định là hôm nay)
+  // Selected date (Default is today)
   DateTime _selectedDate = DateTime.now();
 
-  // Tuần hiện tại đang hiển thị
+  // Current week being displayed
   late DateTime _weekStart; // Monday
   late List<DateTime> _weekDays;
 
@@ -50,14 +50,14 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _setWeek(DateTime.now());
   }
 
-  /// Tính Monday của tuần chứa [date]
+  /// Calculate Monday of the week containing [date]
   void _setWeek(DateTime date) {
     // weekday: Monday=1, Sunday=7
     _weekStart = date.subtract(Duration(days: date.weekday - 1));
     _weekDays = List.generate(7, (i) => _weekStart.add(Duration(days: i)));
   }
 
-  /// Chuyển sang tuần trước
+  /// Switch to previous week
   void _goToPreviousWeek() {
     setState(() {
       _setWeek(_weekStart.subtract(const Duration(days: 7)));
@@ -66,7 +66,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _fetchSchedulesForWeek();
   }
 
-  /// Chuyển sang tuần sau
+  /// Switch to next week
   void _goToNextWeek() {
     setState(() {
       _setWeek(_weekStart.add(const Duration(days: 7)));
@@ -75,7 +75,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _fetchSchedulesForWeek();
   }
 
-  /// Về tuần hiện tại
+  /// Back to current week
   void _goToCurrentWeek() {
     setState(() {
       final now = DateTime.now();
@@ -85,7 +85,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     _fetchSchedulesForWeek();
   }
 
-  /// Gọi API với fromDate/toDate của tuần đang hiển thị
+  /// Call API with fromDate/toDate of the currently displayed week
   Future<void> _fetchSchedulesForWeek() async {
     setState(() => _isLoading = true);
 
@@ -120,7 +120,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }).toList();
   }
 
-  /// Format header hiển thị tuần: "09 Mar - 15 Mar 2026"
+  /// Format header to display week: "09 Mar - 15 Mar 2026"
   String _weekHeader() {
     final from = _weekDays.first;
     final to = _weekDays.last;
@@ -136,7 +136,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     }
   }
 
-  /// Kiểm tra xem tuần đang xem có phải tuần hiện tại
+  /// Check if the viewed week is the current week
   bool _isCurrentWeek() {
     final now = DateTime.now();
     final currentMonday = now.subtract(Duration(days: now.weekday - 1));
@@ -256,7 +256,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                     'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun',
                   ];
 
-                  // Đếm số tiết trong ngày này
+                  // Count number of classes for this day
                   int classCount = _getClassesForDay(date).length;
 
                   return GestureDetector(
@@ -310,7 +310,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                               color: isSelected ? Colors.white : Colors.black87,
                             ),
                           ),
-                          // Dot indicator cho ngày có lịch
+                          // Dot indicator for days with a schedule
                           if (classCount > 0 && !isSelected)
                             Container(
                               margin: const EdgeInsets.only(top: 4),
@@ -374,7 +374,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
     );
   }
 
-  // Widget hiển thị từng tiết học
+  // Widget to display each class slot
   Widget _buildClassCard(Schedule classInfo) {
     Color statusColor = Colors.grey;
     Color cardBg = Colors.white;
@@ -479,7 +479,7 @@ class _ScheduleScreenState extends State<ScheduleScreen> {
                       Icon(Icons.room, size: 16, color: Colors.grey[600]),
                       const SizedBox(width: 4),
                       Text(
-                        "Room: ${classInfo.room}",
+                        "Room: ${classInfo.room} [${classInfo.className}]",
                         style: TextStyle(color: Colors.grey[600], fontSize: 14),
                       ),
                     ],

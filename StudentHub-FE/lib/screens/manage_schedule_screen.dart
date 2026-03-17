@@ -72,7 +72,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Quản lý Lịch học", style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text("Manage Schedule", style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: Colors.lightBlue,
         foregroundColor: Colors.white,
       ),
@@ -84,7 +84,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _selectedClass == null
-                    ? const Center(child: Text("Vui lòng chọn lớp để xem lịch"))
+                    ? const Center(child: Text("Please select a class to view schedule"))
                     : _buildScheduleList(),
           ),
         ],
@@ -93,7 +93,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
           ? FloatingActionButton.extended(
               onPressed: _showBatchScheduleDialog,
               icon: const Icon(Icons.auto_awesome),
-              label: const Text("Xếp lịch hàng loạt"),
+              label: const Text("Batch Schedule"),
               backgroundColor: Colors.lightBlue,
             )
           : null,
@@ -107,7 +107,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
       child: DropdownButtonFormField<Map<String, dynamic>>(
         value: _selectedClass,
         decoration: InputDecoration(
-          labelText: "Chọn lớp học",
+          labelText: "Select class",
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           prefixIcon: const Icon(Icons.class_outlined),
         ),
@@ -127,7 +127,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
 
   Widget _buildScheduleList() {
     if (_schedules.isEmpty) {
-      return const Center(child: Text("Lớp chưa có lịch học nào."));
+      return const Center(child: Text("No schedules found for this class."));
     }
     return ListView.builder(
       padding: const EdgeInsets.all(8),
@@ -195,14 +195,14 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xác nhận xóa"),
-        content: Text("Xóa buổi học môn ${s.subject} ngày ${DateFormat('dd/MM').format(DateTime.parse(s.date))}?"),
+        title: const Text("Confirm Delete"),
+        content: Text("Delete lesson for subject ${s.subject} on ${DateFormat('dd/MM').format(DateTime.parse(s.date))}?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Hủy")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text("Xóa"),
+            child: const Text("Delete"),
           ),
         ],
       ),
@@ -214,7 +214,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
         await _scheduleService.deleteSchedule(s.id!);
         _loadSchedules();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Đã xóa buổi học")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Lesson deleted")));
         }
       } catch (e) {
         _showError(e.toString());
@@ -241,6 +241,7 @@ class _ManageScheduleScreenState extends State<ManageScheduleScreen> {
         staffs: staffs,
         slots: slots,
         classId: _selectedClass!['id'],
+        existingSchedules: _schedules,
         onSuccess: () {
           Navigator.pop(context);
           _loadSchedules();
@@ -256,6 +257,7 @@ class _BatchScheduleWizard extends StatefulWidget {
   final List<Map<String, dynamic>> staffs;
   final List<Map<String, dynamic>> slots;
   final int classId;
+  final List<model.Schedule> existingSchedules;
   final VoidCallback onSuccess;
 
   const _BatchScheduleWizard({
@@ -264,6 +266,7 @@ class _BatchScheduleWizard extends StatefulWidget {
     required this.staffs,
     required this.slots,
     required this.classId,
+    required this.existingSchedules,
     required this.onSuccess,
   });
 
@@ -282,14 +285,48 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
   bool _isLoading = false;
 
   final Map<int, String> _dayNames = {
-    1: "Thứ 2",
-    2: "Thứ 3",
-    3: "Thứ 4",
-    4: "Thứ 5",
-    5: "Thứ 6",
-    6: "Thứ 7",
-    0: "Chủ Nhật",
+    1: "Mon",
+    2: "Tue",
+    3: "Wed",
+    4: "Thu",
+    5: "Fri",
+    6: "Sat",
+    0: "Sun",
   };
+
+  // Map<DayOfWeek, Set<SlotId>>
+  final Map<int, Set<int>> _occupiedMap = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _processExistingSchedules();
+  }
+
+  void _processExistingSchedules() {
+    for (var s in widget.existingSchedules) {
+      if (s.slotId == null) continue;
+      final date = DateTime.parse(s.date);
+      final day = date.weekday % 7; // Map 7 (Sunday) to 0
+      _occupiedMap.putIfAbsent(day, () => {}).add(s.slotId!);
+    }
+  }
+
+  bool _isSlotOccupied(int slotId) {
+    // A slot is considered occupied if it's already scheduled in ANY of the selected days
+    for (var day in _selectedDays) {
+      if (_occupiedMap[day]?.contains(slotId) ?? false) return true;
+    }
+    return false;
+  }
+
+  bool _isDayOccupied(int day) {
+    // A day is considered occupied if it already has ANY of the selected slots scheduled
+    for (var slotId in _selectedSlots) {
+      if (_occupiedMap[day]?.contains(slotId) ?? false) return true;
+    }
+    return false;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -306,7 +343,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Xếp lịch hàng loạt", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+              const Text("Batch Schedule", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
               IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
             ],
           ),
@@ -316,47 +353,61 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildDropdown("Môn học", widget.subjects, "id", "subjectName", (val) => _selectedSubject = val),
+                  _buildDropdown("Subject", widget.subjects, "id", "subjectName", (val) => _selectedSubject = val),
                   const SizedBox(height: 12),
-                  _buildDropdown("Phòng học", widget.rooms, "id", "roomName", (val) => _selectedRoom = val),
+                  _buildDropdown("Room", widget.rooms, "id", "roomName", (val) => _selectedRoom = val),
                   const SizedBox(height: 12),
-                  _buildDropdown("Giáo viên", widget.staffs, "id", "fullName", (val) => _selectedStaff = val),
+                  _buildDropdown("Teacher", widget.staffs, "id", "fullName", (val) => _selectedStaff = val),
                   const SizedBox(height: 20),
-                  const Text("Chọn các thứ trong tuần", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Wrap(
-                    spacing: 8,
-                    children: _dayNames.entries.map((e) {
-                      final isSelected = _selectedDays.contains(e.key);
-                      return FilterChip(
-                        label: Text(e.value),
-                        selected: isSelected,
-                        onSelected: (val) {
-                          setState(() {
-                            if (val) _selectedDays.add(e.key);
-                            else _selectedDays.remove(e.key);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
-                  const SizedBox(height: 20),
-                  const Text("Chọn Tiết học (Slot)", style: TextStyle(fontWeight: FontWeight.bold)),
-                  Wrap(
-                    spacing: 8,
-                    children: widget.slots.map((s) {
-                      final isSelected = _selectedSlots.contains(s['id']);
-                      return FilterChip(
-                        label: Text(s['slotName']),
-                        selected: isSelected,
-                        onSelected: (val) {
-                          setState(() {
-                            if (val) _selectedSlots.add(s['id']);
-                            else _selectedSlots.remove(s['id']);
-                          });
-                        },
-                      );
-                    }).toList(),
-                  ),
+                  const Text("Select days of week", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Wrap(
+                      spacing: 8,
+                      children: _dayNames.entries.map((e) {
+                        final isSelected = _selectedDays.contains(e.key);
+                        final isOccupied = _isDayOccupied(e.key);
+                        return FilterChip(
+                          label: Text(e.value),
+                          selected: isSelected,
+                          onSelected: isOccupied
+                              ? null
+                              : (val) {
+                                  setState(() {
+                                    if (val)
+                                      _selectedDays.add(e.key);
+                                    else
+                                      _selectedDays.remove(e.key);
+                                  });
+                                },
+                          backgroundColor: isOccupied ? Colors.grey[200] : null,
+                          disabledColor: Colors.grey[200],
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text("Select Slots", style: TextStyle(fontWeight: FontWeight.bold)),
+                    Wrap(
+                      spacing: 8,
+                      children: widget.slots.map((s) {
+                        final isSelected = _selectedSlots.contains(s['id']);
+                        final isOccupied = _isSlotOccupied(s['id']);
+                        return FilterChip(
+                          label: Text(s['slotName']),
+                          selected: isSelected,
+                          onSelected: isOccupied
+                              ? null
+                              : (val) {
+                                  setState(() {
+                                    if (val)
+                                      _selectedSlots.add(s['id']);
+                                    else
+                                      _selectedSlots.remove(s['id']);
+                                  });
+                                },
+                          backgroundColor: isOccupied ? Colors.grey[200] : null,
+                          disabledColor: Colors.grey[200],
+                        );
+                      }).toList(),
+                    ),
                   const SizedBox(height: 20),
                   Row(
                     children: [
@@ -364,7 +415,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text("Ngày bắt đầu", style: TextStyle(fontWeight: FontWeight.bold)),
+                            const Text("Start Date", style: TextStyle(fontWeight: FontWeight.bold)),
                             TextButton.icon(
                               onPressed: () async {
                                 final res = await showDatePicker(
@@ -387,7 +438,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
                           controller: _sessionsController,
                           keyboardType: TextInputType.number,
                           decoration: const InputDecoration(
-                            labelText: "Tổng số buổi",
+                            labelText: "Total Sessions",
                             border: OutlineInputBorder(),
                           ),
                         ),
@@ -410,7 +461,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
               ),
               child: _isLoading 
                 ? const CircularProgressIndicator(color: Colors.white)
-                : const Text("Tạo lịch ngay", style: TextStyle(color: Colors.white, fontSize: 16)),
+                : const Text("Create Schedule", style: TextStyle(color: Colors.white, fontSize: 16)),
             ),
           ),
         ],
@@ -428,7 +479,7 @@ class _BatchScheduleWizardState extends State<_BatchScheduleWizard> {
 
   Future<void> _handleBatchSchedule() async {
     if (_selectedSubject == null || _selectedRoom == null || _selectedStaff == null || _selectedSlots.isEmpty || _selectedDays.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Vui lòng nhập đầy đủ thông tin")));
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Please enter all information")));
       return;
     }
 

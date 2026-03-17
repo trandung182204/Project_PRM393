@@ -78,11 +78,11 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xác nhận"),
-        content: const Text("Bạn có chắc muốn xóa sinh viên này khỏi lớp?"),
+        title: const Text("Confirm"),
+        content: const Text("Are you sure you want to remove this student from class?"),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Hủy")),
-          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Xóa")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.pop(context, true), child: const Text("Remove")),
         ],
       ),
     );
@@ -145,7 +145,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
         backgroundColor: Colors.grey[50],
         appBar: AppBar(
           title: Text(
-            _currentState == ScreenState.classList ? 'Xếp Lớp' : _selectedClass?['className'] ?? 'Chi Tiết',
+            _currentState == ScreenState.classList ? 'Class Assignment' : _selectedClass?['className'] ?? 'Details',
             style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
           ),
           backgroundColor: Colors.lightBlue,
@@ -181,22 +181,22 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Thêm lớp học mới"),
+        title: const Text("Add New Class"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: classNameController,
-              decoration: const InputDecoration(labelText: "Tên lớp (VD: 12A1)"),
+              decoration: const InputDecoration(labelText: "Class Name (e.g., 12A1)"),
             ),
             TextField(
               controller: academicYearController,
-              decoration: const InputDecoration(labelText: "Niên khóa (VD: 2024-2027)"),
+              decoration: const InputDecoration(labelText: "Academic Year (e.g., 2024-2027)"),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Hủy")),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
           ElevatedButton(
             onPressed: () async {
               if (classNameController.text.isEmpty) return;
@@ -209,7 +209,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                 );
                 _loadClasses();
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Tạo lớp học thành công!")));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Class created successfully!")));
                 }
               } catch (e) {
                 if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -217,7 +217,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
-            child: const Text("Tạo lớp", style: TextStyle(color: Colors.white)),
+            child: const Text("Create Class", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -232,7 +232,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
           child: TextField(
             onChanged: _filterClasses,
             decoration: InputDecoration(
-              hintText: 'Tìm kiếm lớp học...',
+              hintText: 'Search classes...',
               prefixIcon: const Icon(Icons.search),
               filled: true,
               fillColor: Colors.white,
@@ -245,7 +245,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
         ),
         Expanded(
           child: _filteredClasses.isEmpty
-              ? const Center(child: Text("Không tìm thấy lớp học"))
+              ? const Center(child: Text("No classes found"))
               : ListView.builder(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   itemCount: _filteredClasses.length,
@@ -261,7 +261,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                           child: const Icon(Icons.class_, color: Colors.lightBlue),
                         ),
                         title: Text(c['className'], style: const TextStyle(fontWeight: FontWeight.bold)),
-                        subtitle: Text("Lớp ID: ${c['id']}"),
+                        subtitle: Text("Class ID: ${c['id']}"),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -293,22 +293,22 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Chỉnh sửa lớp học"),
+        title: const Text("Edit Class"),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: classNameController,
-              decoration: const InputDecoration(labelText: "Tên lớp"),
+              decoration: const InputDecoration(labelText: "Class Name"),
             ),
             TextField(
               controller: academicYearController,
-              decoration: const InputDecoration(labelText: "Niên khóa"),
+              decoration: const InputDecoration(labelText: "Academic Year"),
             ),
           ],
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Hủy")),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
           ElevatedButton(
             onPressed: () async {
               if (classNameController.text.isEmpty) return;
@@ -322,7 +322,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
                 );
                 _loadClasses();
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Cập nhật lớp học thành công!")));
+                  ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Class updated successfully!")));
                 }
               } catch (e) {
                 if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -330,7 +330,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
               }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.lightBlue),
-            child: const Text("Lưu thay đổi", style: TextStyle(color: Colors.white)),
+            child: const Text("Save Changes", style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -341,14 +341,14 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text("Xác nhận xóa"),
-        content: Text("Bạn có chắc muốn xóa lớp ${c['className']}? Hành động này không thể hoàn tác."),
+        title: const Text("Confirm Delete"),
+        content: Text("Are you sure you want to delete class ${c['className']}? This action cannot be undone."),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Hủy")),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text("Cancel")),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: const Text("Xóa"),
+            child: const Text("Delete"),
           ),
         ],
       ),
@@ -360,7 +360,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
         await _classService.deleteClass(c['id']);
         _loadClasses();
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Xóa lớp học thành công!")));
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Class deleted successfully!")));
         }
       } catch (e) {
         if (mounted) ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
@@ -379,14 +379,14 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Danh sách sinh viên trong lớp", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-              Text("${_studentsInClass.length} sinh viên", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+              const Text("Students in Class", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+              Text("${_studentsInClass.length} students", style: TextStyle(color: Colors.grey[600], fontSize: 13)),
             ],
           ),
         ),
         Expanded(
           child: _studentsInClass.isEmpty
-              ? const Center(child: Text("Lớp chưa có sinh viên nào"))
+              ? const Center(child: Text("Class is empty"))
               : ListView.builder(
                   padding: const EdgeInsets.all(16),
                   itemCount: _studentsInClass.length,
@@ -415,7 +415,7 @@ class _ClassAssignmentScreenState extends State<ClassAssignmentScreen> {
               child: ElevatedButton.icon(
                 onPressed: _showAddStudentPicker,
                 icon: const Icon(Icons.person_add, color: Colors.white),
-                label: const Text("THÊM SINH VIÊN", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                label: const Text("ADD STUDENTS", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.lightBlue,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -471,7 +471,7 @@ class _StudentPickerState extends State<StudentPicker> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text("Chọn sinh viên", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+               const Text("Select Students", style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
             ],
           ),
@@ -479,7 +479,7 @@ class _StudentPickerState extends State<StudentPicker> {
           TextField(
             onChanged: _filter,
             decoration: InputDecoration(
-              hintText: 'Tìm theo tên hoặc mã số...',
+              hintText: 'Search by name or ID...',
               prefixIcon: const Icon(Icons.search),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
@@ -523,7 +523,7 @@ class _StudentPickerState extends State<StudentPicker> {
                 backgroundColor: Colors.lightBlue,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
               ),
-              child: Text("XÁC NHẬN (${_selectedIds.length})", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text("CONFIRM (${_selectedIds.length})", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
             ),
           ),
         ],

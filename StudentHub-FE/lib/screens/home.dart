@@ -8,7 +8,13 @@ final List<Map<String, dynamic>> menuItems = [
     'icon': Icons.assignment,
     'label': 'Mark Report',
     'route': '/mark_report',
-    'roles': ['Student', 'Staff'],
+    'roles': ['Student'],
+  },
+  {
+    'icon': Icons.edit_note,
+    'label': 'Grade Management',
+    'route': '/manage_grades',
+    'roles': ['Staff'],
   },
   {
     'icon': Icons.description,
@@ -76,6 +82,12 @@ final List<Map<String, dynamic>> menuItems = [
     'route': '/manage_schedule',
     'roles': ['Admin'],
   },
+  {
+    'icon': Icons.menu_book,
+    'label': 'Subject Management',
+    'route': '/manage_subjects',
+    'roles': ['Admin'],
+  },
 ];
 
 class Home extends StatefulWidget {
@@ -108,8 +120,8 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     final args = ModalRoute.of(context)?.settings.arguments as dynamic;
 
-    // Trích xuất thông tin (thêm fallback phòng trường hợp null)
-    final String fullName = args?.fullName ?? "Người dùng ẩn danh";
+    // Extract information with fallback for English localization
+    final String fullName = args?.fullName ?? "Anonymous User";
     final String role = (args?.role ?? "Student").toString().trim();
     final String rollNumber = args?.rollNumber ?? "N/A";
 
@@ -130,48 +142,116 @@ class _HomeState extends State<Home> {
     );
 
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(20),
-          child: Column(
-            children: [
-              SizedBox(height: 40),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Icon(Icons.account_circle),
-                  Icon(Icons.notifications),
+        child: Column(
+          children: [
+            // Modern Header with Gradient and Logo
+            Container(
+              padding: const EdgeInsets.fromLTRB(20, 50, 20, 30),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Colors.lightBlue.shade700,
+                    Colors.lightBlue.shade400,
+                  ],
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.lightBlue.withOpacity(0.3),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
                 ],
               ),
-              SizedBox(height: 20),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  fullName,
-                  style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
-                ),
-              ),
-
-              SizedBox(height: 10),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Text.rich(
-                  TextSpan(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      TextSpan(text: "Role: $role"),
-                      if (userRoles.contains("student")) ...[
-                        TextSpan(text: " - Roll Number: "),
-                        TextSpan(
-                          text: rollNumber,
-                          style: TextStyle(color: Colors.lightBlue),
+                      // Logo
+                      Image.asset(
+                        'assets/icon/student_hub_logo.png',
+                        height: 40,
+                        // color: Colors.white, // Remove tint if logo has colors
+                        errorBuilder: (context, error, stackTrace) => 
+                          const Icon(Icons.school, color: Colors.white, size: 30),
+                      ),
+                      // Notification Icon
+                      Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white.withOpacity(0.2),
+                          shape: BoxShape.circle,
                         ),
-                      ],
+                        child: IconButton(
+                          icon: const Icon(Icons.notifications_none, color: Colors.white),
+                          onPressed: () {},
+                        ),
+                      ),
                     ],
                   ),
-                ),
+                  const SizedBox(height: 25),
+                  // User Info Section
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundColor: Colors.white.withOpacity(0.3),
+                        child: const Icon(Icons.person, color: Colors.white, size: 35),
+                      ),
+                      const SizedBox(width: 15),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              fullName,
+                              style: const TextStyle(
+                                fontSize: 24,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text.rich(
+                              TextSpan(
+                                style: const TextStyle(color: Colors.white70, fontSize: 14),
+                                children: [
+                                  TextSpan(text: "Role: $role"),
+                                  if (userRoles.contains("student")) ...[
+                                    const TextSpan(text: " • ID: "),
+                                    TextSpan(
+                                      text: rollNumber,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ],
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-
-              SizedBox(height: 20),
+            ),
+            
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                children: [
+                  const SizedBox(height: 20),
 
               GridView.count(
                 crossAxisCount: 4,
@@ -198,19 +278,17 @@ class _HomeState extends State<Home> {
                             arguments: args,
                           );
                         } else if (item['route'] == '/mark_report') {
-                          if (userRoles.contains("admin")) {
-                            Navigator.pushNamed(
-                              context,
-                              '/manage_grades',
-                              arguments: args,
-                            );
-                          } else {
-                            Navigator.pushNamed(
-                              context,
-                              item['route'],
-                              arguments: args?.studentId,
-                            );
-                          }
+                          Navigator.pushNamed(
+                            context,
+                            item['route'],
+                            arguments: args?.studentId,
+                          );
+                        } else if (item['route'] == '/manage_grades') {
+                          Navigator.pushNamed(
+                            context,
+                            '/manage_grades',
+                            arguments: args,
+                          );
                         } else if (item['route'] == '/events') {
                           if (userRoles.contains("admin")) {
                             Navigator.pushNamed(context, '/manage_events');
@@ -223,6 +301,12 @@ class _HomeState extends State<Home> {
                           } else {
                             Navigator.pushNamed(context, item['route']);
                           }
+                        } else if (item['route'] == '/manage_absences') {
+                          Navigator.pushNamed(
+                            context,
+                            item['route'],
+                            arguments: args,
+                          );
                         } else {
                           Navigator.pushNamed(context, item['route']);
                         }
@@ -330,8 +414,10 @@ class _HomeState extends State<Home> {
                         );
                       },
                     ),
-            ],
-          ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
       bottomNavigationBar: CustomBottomNavigationBar(

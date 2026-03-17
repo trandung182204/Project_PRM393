@@ -24,8 +24,8 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
         SnackBar(
           content: Text(
             success
-                ? 'Đăng ký tham gia thành công!'
-                : 'Không thể đăng ký. Có thể bạn đã đăng ký hoặc sự kiện đã đầy.',
+                ? 'Registration successful!'
+                : 'Registration failed. You might already be registered or the event is full.',
           ),
           backgroundColor: success ? Colors.green : Colors.red,
         ),
@@ -194,7 +194,7 @@ class _EventDetailScreenState extends State<EventDetailScreen> {
                       onPressed: _isRegistered ? null : _registerForEvent,
                       child: Text(
                         _isRegistered
-                            ? (_attendanceStatus == 'Attended' ? "✓ Đã tham gia" : "✓ Đã đăng ký")
+                            ? (_attendanceStatus == 'Attended' ? "✓ Attended" : "✓ Registered")
                             : "Register Now",
                         style: const TextStyle(color: Colors.white, fontSize: 18),
                       ),

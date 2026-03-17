@@ -18,23 +18,23 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
   bool _isLoading = false;
 
-  // Biến cho bộ đếm ngược
-  int _timeLeft = 20; // 20 giây khớp với Backend của bạn
+  // Variable for countdown timer
+  int _timeLeft = 20; // 20 seconds, match with your Backend
   Timer? _timer;
 
   @override
   void initState() {
     super.initState();
-    _startTimer(); // Bắt đầu đếm ngược ngay khi vào màn hình
+    _startTimer(); // Start countdown immediately on screen entry
   }
 
   @override
   void dispose() {
-    _timer?.cancel(); // Hủy timer khi rời khỏi màn hình để tránh lỗi bộ nhớ
+    _timer?.cancel(); // Cancel timer when leaving screen to avoid memory leaks
     super.dispose();
   }
 
-  // Hàm đếm ngược thời gian
+  // Function for countdown timer
   void _startTimer() {
     setState(() => _timeLeft = 20);
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
@@ -46,15 +46,15 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     });
   }
 
-  // Hàm xử lý nút Resend OTP
+  // Handle Resend OTP button click
   void _handleResendOtp() async {
     setState(() => _isLoading = true);
     try {
       await _authService.sendOtp(widget.phoneNumber);
-      _startTimer(); // Gửi thành công thì reset lại bộ đếm 20s
+      _startTimer(); // Reset countdown to 20s on success
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Đã gửi lại mã OTP vào Email của bạn!")),
+        const SnackBar(content: Text("OTP code has been resent to your Email!")),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -65,14 +65,14 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
     }
   }
 
-  // Hàm xử lý nút Xác nhận đổi mật khẩu
+  // Handle Confirm Reset Password button click
   void _handleReset() async {
     final otpCode = _otpController.text.trim();
     final newPassword = _passController.text.trim();
 
     if (otpCode.isEmpty || newPassword.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Vui lòng điền đủ OTP và Mật khẩu mới")),
+        const SnackBar(content: Text("Please enter both OTP and a new Password")),
       );
       return;
     }
@@ -92,17 +92,17 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text("Đổi mật khẩu thành công! Hãy đăng nhập lại."),
+            content: Text("Password changed successfully! Please log in again."),
           ),
         );
         Navigator.pushNamedAndRemoveUntil(
           context,
           '/login',
           (route) => false,
-        ); // Đẩy về login, xóa lịch sử
+        ); // Navigate to login, clear history
       }
     } catch (e) {
-      // NẾU MÃ HẾT HẠN HOẶC SAI, LỖI SẼ HIỆN Ở ĐÂY
+      // IF CODE IS EXPIRED OR WRONG, ERRORS WILL APPEAR HERE
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -119,7 +119,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Xác nhận OTP"),
+        title: const Text("Verify OTP"),
         backgroundColor: Colors.transparent,
         elevation: 0,
         foregroundColor: Colors.lightBlue,
@@ -136,7 +136,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               ),
               const SizedBox(height: 20),
               Text(
-                "Mã OTP đã được gửi tới tài khoản liên kết với SĐT:\n${widget.phoneNumber}",
+                "An OTP code has been sent to the account linked with phone:\n${widget.phoneNumber}",
                 textAlign: TextAlign.center,
                 style: const TextStyle(fontSize: 16),
               ),
@@ -147,7 +147,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.password),
-                  labelText: "Nhập mã OTP",
+                  labelText: "Enter OTP code",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -155,10 +155,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
 
               TextFormField(
                 controller: _passController,
-                obscureText: true, // Ẩn mật khẩu
+                obscureText: true, // Hide password
                 decoration: const InputDecoration(
                   prefixIcon: Icon(Icons.lock),
-                  labelText: "Mật khẩu mới",
+                  labelText: "New Password",
                   border: OutlineInputBorder(),
                 ),
               ),
@@ -179,7 +179,7 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text(
-                          "Xác nhận đổi mật khẩu",
+                          "Confirm password change",
                           style: TextStyle(color: Colors.white, fontSize: 16),
                         ),
                 ),
@@ -190,10 +190,10 @@ class _ResetPasswordScreenState extends State<ResetPasswordScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Chưa nhận được mã? "),
+                   const Text("Didn't receive code? "),
                   _timeLeft > 0
                       ? Text(
-                          "Gửi lại sau ${_timeLeft}s",
+                          "Resend after ${_timeLeft}s",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.grey,
